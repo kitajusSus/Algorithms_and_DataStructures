@@ -1,426 +1,436 @@
-
 const std = @import("std");
+const ArrayList = std.ArrayList;
+const Allocator = std.mem.Allocator;
+const Order = std.math.Order;
+const stdout = std.io.getStdOut().writer();
 
-/// Struktura węzła drzewa Huffmana.
+// Węzeł drzewa Huffmana
 const HuffmanNode = struct {
-    frequency: usize,   // liczba wystąpień (lub suma w węźle wewn.)
-    symbol: u8,         // bajt (znak) - tylko w liściach ma znaczenie
-    leftChild: ?*HuffmanNode,
-    rightChild: ?*HuffmanNode,
+    character: ?u8, // Znak (null dla węzłów wewnętrznych)
+    frequency: u32, // Częstotliwość wystąpienia znaku
+    left: ?*HuffmanNode, // Lewy potomek
+    right: ?*HuffmanNode, // Prawy potomek
+
+    // Porównanie węzłów na podstawie częstotliwości
+    pub fn compare(a: *HuffmanNode, b: *HuffmanNode) Order {
+        if (a.frequency < b.frequency) {
+            return .lt;
+        } else if (a.frequency > b.frequency) {
+            return .gt;
+        } else {
+            return .eq;
+        }
+    }
 };
 
-/// Struktura pomocnicza: częstotliwości + zakodowane bity.
-const FreqAndEncoded = struct {
-    freq: [256]usize,
-    encodedBits: []const u8,
+// Przechowuje kod Huffmana dla każdego znaku
+const HuffmanCode = struct {
+    code: ArrayList(bool),
+
+    pub fn init(allocator: Allocator) HuffmanCode {
+        return HuffmanCode{
+            .code = ArrayList(bool).init(allocator),
+        };
+    }
+
+    pub fn deinit(self: *HuffmanCode) void {
+        self.code.deinit();
+    }
+
+    pub fn clone(self: HuffmanCode, allocator: Allocator) !HuffmanCode {
+        var new_code = ArrayList(bool).init(allocator);
+        try new_code.appendSlice(self.code.items);
+        return HuffmanCode{ .code = new_code };
+    }
 };
 
-/// 1. Czytanie pliku w całości do bufora.
-fn readEntireFile(allocator: *std.mem.Allocator, path: []const u8) ![]u8 {
-    var file = try std.fs.cwd().openFile(path, .{ .read = true });
-    defer file.close();
-
-    const info = try file.stat();
-    const size = info.size;
-
-    var buffer = try allocator.alloc(u8, size);
-    const readBytes = try file.readAll(buffer);
-    if (readBytes != size) {
-        return error.UnexpectedEof;
+// Tworzy drzewo Huffmana na podstawie tekstu
+fn buildHuffmanTree(allocator: Allocator, text: []const u8) !?*HuffmanNode {
+    // Liczy częstotliwość każdego znaku
+    var freq = [_]u32{0} ** 256;
+    for (text) |char| {
+        freq[char] += 1;
     }
-    return buffer;
-}
 
-/// 2. Zapis całego bufora do pliku (np. używane przy dekodowaniu).
-fn writeEntireFile(path: []const u8, data: []const u8) !void {
-    var file = try std.fs.cwd().createFile(path, .{ .write = true, .truncate = true });
-    defer file.close();
+    // Tworzy kolejkę priorytetową węzłów dla znaków o niezerowej częstotliwości
+    var priority_queue = ArrayList(*HuffmanNode).init(allocator);
+    defer priority_queue.deinit();
 
-    try file.writer().writeAll(data);
-}
-
-/// 3. Zliczenie częstotliwości (ile razy występuje każdy bajt 0..255).
-fn countFrequencies(data: []const u8) [256]usize {
-    var freq: [256]usize = [_]usize{0} ** 256;
-    for (data) |b| {
-        freq[b] += 1;
-    }
-    return freq;
-}
-
-/// 4. Budowa drzewa Huffmana na podstawie częstotliwości.
-///    Kluczowe: przechowujemy wskaźniki do alokowanych węzłów.
-fn buildHuffmanTree(
-    allocator: *std.mem.Allocator,
-    freq: [256]usize
-) !*HuffmanNode {
-    // Zbierz wskaźniki do węzłów (tylko tam, gdzie freq > 0)
-    var nodePtrs = try allocator.alloc(*HuffmanNode, 0);
-    defer allocator.free(nodePtrs);
-
-    var countNonZero: usize = 0;
-
-    for (freq, idx) |f, i| {
-        if (f > 0) {
-            countNonZero += 1;
-            nodePtrs = try std.mem.resize(allocator, nodePtrs, *HuffmanNode, countNonZero);
-
-            // Alokujemy nowy węzeł
-            let newNodePtr = try allocator.create(HuffmanNode);
-            newNodePtr.* = HuffmanNode{
-                .frequency = f,
-                .symbol = @as(u8, i),
-                .leftChild = null,
-                .rightChild = null,
+    for (0..256) |i| {
+        if (freq[i] > 0) {
+            const node = try allocator.create(HuffmanNode);
+            node.* = HuffmanNode{
+                .character = @intCast(i),
+                .frequency = freq[i],
+                .left = null,
+                .right = null,
             };
-            nodePtrs[countNonZero - 1] = newNodePtr;
+            try priority_queue.append(node);
         }
     }
 
-    // Jeśli tylko 1 rodzaj bajtu, sztucznie dublujemy, by mieć 2 liście
-    if (countNonZero == 1) {
-        countNonZero += 1;
-        nodePtrs = try std.mem.resize(allocator, nodePtrs, *HuffmanNode, countNonZero);
-
-        // duplikujemy istniejący węzeł
-        let clonedNodePtr = try allocator.create(HuffmanNode);
-        clonedNodePtr.* = nodePtrs[countNonZero - 2].*;
-        nodePtrs[countNonZero - 1] = clonedNodePtr;
-    } else if (countNonZero == 0) {
-        // brak danych
-        return null;
+    // Jeśli text zawiera tylko jeden rodzaj znaku, tworzymy dwa węzły
+    if (priority_queue.items.len == 1) {
+        const node = try allocator.create(HuffmanNode);
+        node.* = HuffmanNode{
+            .character = null,
+            .frequency = priority_queue.items[0].frequency,
+            .left = priority_queue.items[0],
+            .right = null,
+        };
+        return node;
     }
 
-    var n = countNonZero;
-    while (n > 1) {
-        // Sortowanie tablicy wskaźników do węzłów po częstotliwości
-        try sortNodePointers(nodePtrs[0..n]);
+    // Buduje drzewo Huffmana
+    while (priority_queue.items.len > 1) {
+        // Sortuje kolejkę priorytetową
+        std.sort.insertion(*HuffmanNode, priority_queue.items, {}, struct {
+            fn lessThan(_: void, a: *HuffmanNode, b: *HuffmanNode) bool {
+                return a.compare(b) == .lt;
+            }
+        }.lessThan);
 
-        const nodeA = nodePtrs[0];
-        const nodeB = nodePtrs[1];
+        // Pobiera dwa węzły o najniższej częstotliwości
+        const left = priority_queue.orderedRemove(0);
+        const right = priority_queue.orderedRemove(0);
 
-        // Tworzymy węzeł-rodzic
-        const parentPtr = try allocator.create(HuffmanNode);
-        parentPtr.* = HuffmanNode{
-            .frequency = nodeA.frequency + nodeB.frequency,
-            .symbol = 0, // w węzłach wewn. nieważne
-            .leftChild = nodeA,
-            .rightChild = nodeB,
+        // Tworzy nowy węzeł wewnętrzny
+        const internal_node = try allocator.create(HuffmanNode);
+        internal_node.* = HuffmanNode{
+            .character = null,
+            .frequency = left.frequency + right.frequency,
+            .left = left,
+            .right = right,
         };
 
-        // Zastępujemy dwa węzły nowym węzłem (skracamy tablicę o 1)
-        nodePtrs[0] = parentPtr;
-        nodePtrs[1] = nodePtrs[n - 1];
-        n -= 1;
+        try priority_queue.append(internal_node);
     }
 
-    return nodePtrs[0]; // wskaźnik do korzenia
+    return if (priority_queue.items.len > 0) priority_queue.items[0] else null;
 }
 
-/// Sortowanie tablicy *wskaźników* rosnąco po `frequency`.
-fn sortNodePointers(slice: []*HuffmanNode) !void {
-    const sort = std.sort.sort;
-    sort(*HuffmanNode, slice, struct {
-        fn compare(a: *HuffmanNode, b: *HuffmanNode) std.math.order {
-            if (a.frequency < b.frequency) return .less;
-            if (a.frequency > b.frequency) return .greater;
-            return .equal;
+// Generuje kody Huffmana dla każdego znaku
+fn generateHuffmanCodes(allocator: Allocator, root: *HuffmanNode, code: ArrayList(bool), huffman_codes: *[256]?HuffmanCode) !void {
+    if (root.character) |char| {
+        // Węzeł liściowy
+        if (huffman_codes[@intCast(char)] == null) {
+            huffman_codes[@intCast(char)] = HuffmanCode.init(allocator);
         }
-    }) catch return;
-}
-
-/// 5. Rekurencyjne generowanie kodów (mapa: bajt -> ciąg '0'/'1').
-fn buildCodesImpl(
-    allocator: *std.mem.Allocator,
-    node: *HuffmanNode,
-    prefix: []const u8,
-    codes: *std.HashMapUnmanaged(u8, []u8),
-) !void {
-    if (node.leftChild == null and node.rightChild == null) {
-        // liść
-        try codes.put(node.symbol, prefix);
-        return;
-    }
-    // Lewo => '0'
-    if (node.leftChild != null) {
-        const leftPath = try appendBit(allocator, prefix, '0');
-        defer allocator.free(leftPath);
-        try buildCodesImpl(allocator, node.leftChild.?, leftPath, codes);
-    }
-    // Prawo => '1'
-    if (node.rightChild != null) {
-        const rightPath = try appendBit(allocator, prefix, '1');
-        defer allocator.free(rightPath);
-        try buildCodesImpl(allocator, node.rightChild.?, rightPath, codes);
-    }
-}
-
-/// Dokleja jeden znak ('0' lub '1') do końca istniejącego ciągu.
-fn appendBit(
-    allocator: *std.mem.Allocator,
-    prefix: []const u8,
-    bit: u8
-) ![]u8 {
-    var newPath = try allocator.alloc(u8, prefix.len + 1);
-    std.mem.copy(u8, newPath, prefix);
-    newPath[prefix.len] = bit;
-    return newPath;
-}
-
-/// Funkcja główna do stworzenia kompletnej mapy kodów.
-fn buildCodes(
-    allocator: *std.mem.Allocator,
-    root: ?*HuffmanNode
-) !std.HashMapUnmanaged(u8, []u8) {
-    var codes = std.HashMapUnmanaged(u8, []u8).init(allocator);
-
-    if (root == null) {
-        // brak danych, brak kodów
-        return codes;
-    }
-    try buildCodesImpl(allocator, root.?, &[_]u8{}, &codes);
-    return codes;
-}
-
-/// 6. Kodowanie pliku (bufora) - zwraca ciąg bitów w postaci ASCII '0'/'1'.
-fn encodeBuffer(
-    allocator: *std.mem.Allocator,
-    data: []const u8,
-    codes: std.HashMapUnmanaged(u8, []u8)
-) ![]u8 {
-    var totalBits: usize = 0;
-
-    // Obliczamy łączną liczbę bitów
-    for (data) |b| {
-        const code = codes.get(b) orelse return error.Invalid;
-        totalBits += code.len;
-    }
-
-    var encoded = try allocator.alloc(u8, totalBits);
-    var pos: usize = 0;
-    for (data) |b| {
-        const code = codes.get(b) orelse return error.Invalid;
-        for (code) |bit| {
-            encoded[pos] = bit;
-            pos += 1;
-        }
-    }
-    return encoded;
-}
-
-/// 7. Odczyt częstotliwości z pliku (pierwsze 256 * 8 bajtów) i pozostałych bitów.
-fn readFrequenciesFromFile(
-    allocator: *std.mem.Allocator,
-    compressed: []const u8
-) !FreqAndEncoded {
-    if (compressed.len < 256 * 8) {
-        return error.Invalid;
-    }
-
-    var freq: [256]usize = [_]usize{0} ** 256;
-
-    var offset: usize = 0;
-    for (freq) |*f| {
-        if (offset + 8 > compressed.len) return error.Invalid;
-
-        const val = @intFromBytes(u64, compressed[offset..offset+8], .little);
-        offset += 8;
-        f.* = @intCast(usize, val);
-    }
-
-    // Reszta to zakodowany ciąg bitów ('0'/'1'):
-    const encodedBits = compressed[offset..];
-
-    return .{
-        .freq = freq,
-        .encodedBits = encodedBits,
-    };
-}
-
-/// 8. Dekodowanie zakodowanego ciągu bitów '0'/'1' za pomocą drzewa Huffmana.
-fn decodeBuffer(
-    allocator: *std.mem.Allocator,
-    encodedBits: []const u8,
-    root: ?*HuffmanNode
-) ![]u8 {
-    if (root == null) {
-        // brak drzewa => brak danych
-        return allocator.alloc(u8, 0);
-    }
-
-    var result = try allocator.alloc(u8, 0);
-    var currentNode = root.?;
-
-    for (encodedBits) |bit| {
-        if (bit == '0') {
-            currentNode = currentNode.leftChild.?;
-        } else if (bit == '1') {
-            currentNode = currentNode.rightChild.?;
-        } else {
-            return error.Invalid; // nieprawidłowy znak w strumieniu
-        }
-
-        // Jeżeli dotarliśmy do liścia
-        if (currentNode.leftChild == null and currentNode.rightChild == null) {
-            const newLen = result.len + 1; // <-- Poprawione
-            result = try std.mem.resize(allocator, result, u8, newLen);
-            result[newLen - 1] = currentNode.symbol;
-            // wracamy do korzenia
-            currentNode = root.?;
-        }
-    }
-
-    return result;
-}
-
-/// 9. Zwalnianie drzewa Huffmana (rekurencyjnie).
-fn destroyTree(allocator: *std.mem.Allocator, node: ?*HuffmanNode) void {
-    if (node == null) return;
-    const realNode = node.?;
-
-    if (realNode.leftChild) |lc| {
-        destroyTree(allocator, lc);
-    }
-    if (realNode.rightChild) |rc| {
-        destroyTree(allocator, rc);
-    }
-    allocator.destroy(realNode);
-}
-
-/// Program główny.
-/// Przykład użycia:
-///   zig run huffman.zig encode input.txt output.huff
-///   zig run huffman.zig decode input.huff output.txt
-pub fn main() !void {
-    const allocator = std.heap.page_allocator;
-
-    var args = std.process.argsAlloc(allocator) catch {
-        std.debug.print("Błąd podczas pobierania argumentów!\n", .{});
-        return;
-    };
-    defer std.process.argsFree(allocator, args);
-
-    if (args.len < 4) {
-        std.debug.print("Użycie:\n", .{});
-        std.debug.print("  {s} encode <plik_wejsciowy> <plik_wyjsciowy>\n", .{ args[0] });
-        std.debug.print("  {s} decode <plik_wejsciowy> <plik_wyjsciowy>\n", .{ args[0] });
-        return;
-    }
-
-    const command = args[1];
-    const inputPath = args[2];
-    const outputPath = args[3];
-
-    if (std.mem.eql(u8, command, "encode")) {
-        // ========================================
-        //              KODOWANIE
-        // ========================================
-        // 1) Wczytaj dane wejściowe
-        var inputData = try readEntireFile(allocator, inputPath);
-        defer allocator.free(inputData);
-
-        if (inputData.len == 0) {
-            // plik pusty? Zapisz 256 zer w freq + brak bitów
-            var freqEmpty: [256]usize = [_]usize{0} ** 256;
-            const headerSize = 256 * 8;
-            var outputBuffer = try allocator.alloc(u8, headerSize);
-            defer allocator.free(outputBuffer);
-            std.mem.set(u8, outputBuffer, 0);
-
-            try writeEntireFile(outputPath, outputBuffer);
-            std.debug.print("Pusty plik skompresowany do pustych freq.\n", .{});
-            return;
-        }
-
-        // 2) Zlicz częstotliwości
-        const freq = countFrequencies(inputData);
-
-        // 3) Budujemy drzewo Huffmana
-        const root = try buildHuffmanTree(allocator, freq);
-        defer destroyTree(allocator, root);
-
-        // 4) Generujemy kody
-        var codes = try buildCodes(allocator, root);
-        defer {
-            // Zwolnij pamięć tablic w mapie
-            for (codes.iterator()) |entry| {
-                allocator.free(entry.value);
-            }
-            codes.deinit();
-        }
-
-        // 5) Kodujemy dane -> ciąg bitów '0'/'1'
-        const encodedBits = try encodeBuffer(allocator, inputData, codes);
-        defer allocator.free(encodedBits);
-
-        // 6) Przygotuj bufor: 256 freq (8 bajtów na freq) + bity
-        const headerSize = 256 * 8;
-        const outputSize = headerSize + encodedBits.len;
-        var outputBuffer = try allocator.alloc(u8, outputSize);
-        defer allocator.free(outputBuffer);
-
-        var offset: usize = 0;
-        for (freq) |f| {
-            let val = @intCast(u64, f);
-            const leBytes = @intToBytes(u64, val, .little);
-            std.mem.copy(u8, outputBuffer[offset..offset+8], leBytes);
-            offset += 8;
-        }
-        // Zapis ciągu bitów
-        std.mem.copy(u8, outputBuffer[offset..offset+encodedBits.len], encodedBits);
-
-        try writeEntireFile(outputPath, outputBuffer);
-        std.debug.print("Zakodowano plik '{s}' do '{s}' (Huffman)\n", .{ inputPath, outputPath });
-
-    } else if (std.mem.eql(u8, command, "decode")) {
-        // ========================================
-        //              DEKODOWANIE
-        // ========================================
-        // 1) Wczytujemy plik (freq + bity)
-        var compressedData = try readEntireFile(allocator, inputPath);
-        defer allocator.free(compressedData);
-
-        if (compressedData.len < 256 * 8) {
-            // plik za mały, będzie pusty
-            var emptySlice = try allocator.alloc(u8, 0);
-            defer allocator.free(emptySlice);
-            try writeEntireFile(outputPath, emptySlice);
-            std.debug.print("Brak danych (lub za mały plik Huffmana), zapisano pusty wynik.\n", .{});
-            return;
-        }
-
-        // 2) Odczytujemy freq i bity
-        const result = try readFrequenciesFromFile(allocator, compressedData);
-        const freq = result.freq;
-        const encodedBits = result.encodedBits;
-
-        // Czy w ogóle coś było zliczone?
-        var sumFreq: usize = 0;
-        for (freq) |f| sumFreq += f;
-        if (sumFreq == 0) {
-            // nic nie ma => plik był pusty
-            var emptySlice = try allocator.alloc(u8, 0);
-            defer allocator.free(emptySlice);
-            try writeEntireFile(outputPath, emptySlice);
-            std.debug.print("Dekodowano pusty plik Huffmana.\n", .{});
-            return;
-        }
-
-        // 3) Odbudowujemy drzewo
-        const root = try buildHuffmanTree(allocator, freq);
-        defer destroyTree(allocator, root);
-
-        // 4) Dekodujemy bity
-        const decodedData = try decodeBuffer(allocator, encodedBits, root);
-        defer allocator.free(decodedData);
-
-        // 5) Zapisujemy wynik
-        try writeEntireFile(outputPath, decodedData);
-        std.debug.print("Zdekodowano plik '{s}' do '{s}'\n", .{ inputPath, outputPath });
-
+        try huffman_codes[@intCast(char)].?.code.appendSlice(code.items);
     } else {
-        std.debug.print("Nieznane polecenie: {s}\n", .{ command });
-        return;
+        // Węzeł wewnętrzny
+        if (root.left) |left| {
+            try code.append(false); // 0 dla lewego potomka
+            try generateHuffmanCodes(allocator, left, code, huffman_codes);
+            _ = code.pop();
+        }
+
+        if (root.right) |right| {
+            try code.append(true); // 1 dla prawego potomka
+            try generateHuffmanCodes(allocator, right, code, huffman_codes);
+            _ = code.pop();
+        }
     }
 }
 
+// Zapisuje skompresowany plik
+fn writeCompressedFile(allocator: Allocator, input_text: []const u8, huffman_codes: [256]?HuffmanCode, output_filename: []const u8) !void {
+    var outfile = try std.fs.cwd().createFile(output_filename, .{});
+    defer outfile.close();
+    var writer = outfile.writer();
+
+    // Zapisuje tabelę kodów (format: [char][code_length][code_bits])
+    try writer.writeByte(@as(u8, @intCast(countNonNullCodes(&huffman_codes))));
+    for (0..256) |i| {
+        if (huffman_codes[i]) |hcode| {
+            try writer.writeByte(@as(u8, @intCast(i)));
+            try writer.writeByte(@as(u8, @intCast(hcode.code.items.len)));
+            
+            // Zapisuje bity kodu w grupach po 8
+            var bit_index: usize = 0;
+            while (bit_index < hcode.code.items.len) {
+                var byte: u8 = 0;
+                var j: usize = 0;
+                while (j < 8 and bit_index + j < hcode.code.items.len) : (j += 1) {
+                    if (hcode.code.items[bit_index + j]) {
+                        byte |= @as(u8, 1) << @intCast(7 - j);
+                    }
+                }
+                try writer.writeByte(byte);
+                bit_index += 8;
+            }
+        }
+    }
+
+    // Zapisuje zakodowany tekst
+    var bit_buffer: u8 = 0;
+    var bit_count: u3 = 0;
+
+    for (input_text) |char| {
+        const char_code = huffman_codes[char].?;
+        for (char_code.code.items) |bit| {
+            if (bit) {
+                bit_buffer |= @as(u8, 1) << @intCast(7 - bit_count);
+            }
+            bit_count += 1;
+            
+            if (bit_count == 8) {
+                try writer.writeByte(bit_buffer);
+                bit_buffer = 0;
+                bit_count = 0;
+            }
+        }
+    }
+
+    // Zapisuje ostatni bajt, jeśli jest niepełny
+    if (bit_count > 0) {
+        try writer.writeByte(bit_buffer);
+    }
+}
+
+// Liczy liczbę niepustych kodów Huffmana
+fn countNonNullCodes(huffman_codes: *const [256]?HuffmanCode) usize {
+    var count: usize = 0;
+    for (huffman_codes) |code| {
+        if (code != null) {
+            count += 1;
+        }
+    }
+    return count;
+}
+
+// Zwalnia zasoby drzewa Huffmana
+fn freeHuffmanTree(allocator: Allocator, node: ?*HuffmanNode) void {
+    if (node) |n| {
+        freeHuffmanTree(allocator, n.left);
+        freeHuffmanTree(allocator, n.right);
+        allocator.destroy(n);
+    }
+}
+
+// Zwalnia zasoby kodów Huffmana
+fn freeHuffmanCodes(huffman_codes: *[256]?HuffmanCode) void {
+    for (0..256) |i| {
+        if (huffman_codes[i]) |*code| {
+            code.deinit();
+            huffman_codes[i] = null;
+        }
+    }
+}
+
+// Główna funkcja kompresji
+fn compressFile(allocator: Allocator, input_filename: []const u8, output_filename: []const u8) !void {
+    try stdout.print("Kompresowanie pliku: {s} -> {s}\n", .{ input_filename, output_filename });
+
+    // Wczytuje plik wejściowy
+    const input_file = try std.fs.cwd().openFile(input_filename, .{});
+    defer input_file.close();
+
+    const file_size = try input_file.getEndPos();
+    const input_text = try allocator.alloc(u8, file_size);
+    defer allocator.free(input_text);
+
+    const bytes_read = try input_file.readAll(input_text);
+    if (bytes_read != file_size) {
+        return error.ReadError;
+    }
+
+    // Buduje drzewo Huffmana
+    const root = try buildHuffmanTree(allocator, input_text);
+    defer if (root) |r| freeHuffmanTree(allocator, r);
+
+    if (root == null) {
+        try stdout.print("Pusty plik wejściowy.\n", .{});
+        return;
+    }
+
+    // Generuje kody Huffmana
+    var huffman_codes: [256]?HuffmanCode = [_]?HuffmanCode{null} ** 256;
+    defer freeHuffmanCodes(&huffman_codes);
+
+    var code = ArrayList(bool).init(allocator);
+    defer code.deinit();
+
+    try generateHuffmanCodes(allocator, root.?, code, &huffman_codes);
+
+    // Zapisuje skompresowany plik
+    try writeCompressedFile(allocator, input_text, huffman_codes, output_filename);
+
+    try stdout.print("Kompresja zakończona pomyślnie.\n", .{});
+}
+
+// Funkcje dla dekompresji
+
+// Odczytuje drzewo Huffmana z pliku
+fn readHuffmanTree(allocator: Allocator, file: std.fs.File) !*HuffmanNode {
+    var reader = file.reader();
+    
+    // Odczytuje liczbę znaków w tabeli
+    const num_chars = try reader.readByte();
+    
+    // Tworzy mapę kodów Huffmana
+    var huffman_codes: [256]?HuffmanCode = [_]?HuffmanCode{null} ** 256;
+    defer freeHuffmanCodes(&huffman_codes);
+    
+    // Odczytuje kody dla każdego znaku
+    var i: usize = 0;
+    while (i < num_chars) : (i += 1) {
+        const char = try reader.readByte();
+        const code_length = try reader.readByte();
+        
+        huffman_codes[char] = HuffmanCode.init(allocator);
+        
+        // Odczytuje bity kodu
+        var bits_to_read = code_length;
+        while (bits_to_read > 0) {
+            const byte = try reader.readByte();
+            var j: u3 = 0;
+            while (j < 8 and bits_to_read > 0) : (j += 1) {
+                const bit = (byte & (@as(u8, 1) << @intCast(7 - j))) != 0;
+                try huffman_codes[char].?.code.append(bit);
+                bits_to_read -= 1;
+            }
+        }
+    }
+    
+    // Rekonstruuje drzewo Huffmana z kodów
+    var root = try allocator.create(HuffmanNode);
+    root.* = HuffmanNode{
+        .character = null,
+        .frequency = 0,
+        .left = null,
+        .right = null,
+    };
+    
+    for (0..256) |c| {
+        if (huffman_codes[c]) |hcode| {
+            var current = root;
+            
+            for (hcode.code.items) |bit| {
+                if (bit) {
+                    // Prawy potomek (1)
+                    if (current.right == null) {
+                        const new_node = try allocator.create(HuffmanNode);
+                        new_node.* = HuffmanNode{
+                            .character = null,
+                            .frequency = 0,
+                            .left = null,
+                            .right = null,
+                        };
+                        current.right = new_node;
+                    }
+                    current = current.right.?;
+                } else {
+                    // Lewy potomek (0)
+                    if (current.left == null) {
+                        const new_node = try allocator.create(HuffmanNode);
+                        new_node.* = HuffmanNode{
+                            .character = null,
+                            .frequency = 0,
+                            .left = null,
+                            .right = null,
+                        };
+                        current.left = new_node;
+                    }
+                    current = current.left.?;
+                }
+            }
+            
+            current.character = @intCast(c);
+        }
+    }
+    
+    return root;
+}
+
+// Dekompresuje plik
+fn decompressFile(allocator: Allocator, input_filename: []const u8, output_filename: []const u8) !void {
+    try stdout.print("Dekompresowanie pliku: {s} -> {s}\n", .{ input_filename, output_filename });
+
+    // Otwiera plik wejściowy
+    const input_file = try std.fs.cwd().openFile(input_filename, .{});
+    defer input_file.close();
+
+    // Odczytuje drzewo Huffmana
+    const root = try readHuffmanTree(allocator, input_file);
+    defer freeHuffmanTree(allocator, root);
+
+    // Tworzy plik wyjściowy
+    var output_file = try std.fs.cwd().createFile(output_filename, .{});
+    defer output_file.close();
+    var writer = output_file.writer();
+
+    // Dekoduje dane
+    var reader = input_file.reader();
+    var current = root;
+    var byte: u8 = 0;
+    var bit_position: u3 = 0;
+
+    while (true) {
+        // Odczytuje nowy bajt kiedy potrzebny
+        if (bit_position == 0) {
+            byte = reader.readByte() catch |err| {
+                if (err == error.EndOfStream) {
+                    break;
+                }
+                return err;
+            };
+        }
+
+        // Pobiera bit i przesuwa się w drzewie
+        const bit = (byte & (@as(u8, 1) << @intCast(7 - bit_position))) != 0;
+
+        if (bit) {
+            current = current.right orelse root;
+        } else {
+            current = current.left orelse root;
+        }
+
+        // Jeśli dotarliśmy do liścia, zapisujemy znak
+        if (current.character) |char| {
+            try writer.writeByte(char);
+            current = root;
+        }
+
+        // Przesuwamy się do następnego bitu
+        bit_position = @intCast((@as(u4, bit_position) + 1) % 8);
+    }
+
+    try stdout.print("Dekompresja zakończona pomyślnie.\n", .{});
+}
+
+pub fn main() !void {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
+
+    var args = std.process.args();
+    _ = args.skip(); // Skips the program name
+
+    // Sprawdza argumenty
+    const operation = args.next(allocator) orelse {
+        try stdout.print("Użycie: program [compress|decompress] plik_wejściowy plik_wyjściowy\n", .{});
+        return;
+    };
+    defer allocator.free(operation);
+
+    const input_file = args.next(allocator) orelse {
+        try stdout.print("Brak pliku wejściowego.\n", .{});
+        return;
+    };
+    defer allocator.free(input_file);
+
+    const output_file = args.next(allocator) orelse {
+        try stdout.print("Brak pliku wyjściowego.\n", .{});
+        return;
+    };
+    defer allocator.free(output_file);
+
+    if (std.mem.eql(u8, operation, "compress")) {
+        try compressFile(allocator, input_file, output_file);
+    } else if (std.mem.eql(u8, operation, "decompress")) {
+        try decompressFile(allocator, input_file, output_file);
+    } else {
+        try stdout.print("Nieznana operacja: {s}. Użyj 'compress' lub 'decompress'.\n", .{operation});
+    }
+}

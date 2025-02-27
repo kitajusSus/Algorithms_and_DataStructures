@@ -1,3 +1,9 @@
+# Kodowanie algorytmem Huffmana:
+a) napisać program kodujący (kompresujący) dowolny plik tekstowy,
+b) napisać program dekodujący (tj. rozpakowanie) plik zakodowany algorytmem
+Huffmana i zapisujący wynik do pliku (np. wynik.txt).
+
+## skibiduing
 Poniżej znajdziesz kompletny przykład w języku Zig, który pozwala na:
 
     Kompresję (kodowanie) pliku tekstowego algorytmem Huffmana,
