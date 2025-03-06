@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?><JavaBlocks author="user" scriptEngine="JavaScript" version="6010">
   <option fullConnectorValues="true" grid="false" pascal="false"/>
   <flowchart name="Start">
-    <canvas interval="200" posX="30.97586" posY="-167.3443" zoom="4"/>
+    <canvas interval="200" posX="-152.96822" posY="-100.72705" zoom="5"/>
     <preArgument>a= [1,3,54,6,7,5]</preArgument>
     <blocks>
-      <block id="0" name="Start" type="START">
+      <block id="1" name="Start" type="START">
         <options displayComment="true"/>
         <visual color="56 255 41" posX="-210.0" posY="-270.0"/>
         <comment>Start</comment>
-        <connect ID="2"/>
+        <connect ID="3"/>
       </block>
-      <block id="1" type="RETURN">
+      <block id="2" type="RETURN">
         <options displayComment="true"/>
         <visual color="255 255 0" posX="-230.0" posY="370.0"/>
         <comment>End</comment>
       </block>
-      <block id="2" type="IO">
+      <block id="3" type="IO">
         <options displayComment="true"/>
         <visual color="255 255 0" posX="-210.0" posY="-120.0"/>
         <content>var a=new Array(6);	a[0]=ReadNumber("[0] Wypełnij tablicę");	a[1]=ReadNumber("[1] Wypełnij tablicę");	a[2]=ReadNumber("[2] Wypełnij tablicę");	a[3]=ReadNumber("[3] Wypełnij tablicę");	a[4]=ReadNumber("[4] Wypełnij tablicę");	a[5]=ReadNumber("[5] Wypełnij tablicę");	;	</content>
         <comment>"Wypełnij tablicę";	a [6] ;	</comment>
-        <connect ID="3"/>
+        <connect ID="4"/>
         <io array="6" inputType="0" ioType="2" message="Wypełnij tablicę" variable="a"/>
       </block>
-      <block id="3" type="CPU">
+      <block id="4" type="CPU">
         <options displayComment="false"/>
         <visual color="255 255 0" posX="-210.0" posY="-20.0"/>
         <content>var r=6;&#13;;	var i=0;&#13;;	&#13;;	</content>
-        <connect ID="17"/>
+        <connect ID="15"/>
       </block>
-      <block id="4" type="DECISION">
+      <block id="5" type="DECISION">
         <options displayComment="false"/>
         <visual color="0 234 144" posX="-210.0" posY="130.0"/>
         <content>i&lt;r</content>
-        <connect ID="5" value="true"/>
-        <connect ID="18" value="false"/>
+        <connect ID="6" value="true"/>
+        <connect ID="16" value="false"/>
       </block>
-      <block id="5" type="CPU">
+      <block id="6" type="CPU">
         <options displayComment="false"/>
         <visual color="255 255 0" posX="0.0" posY="130.0"/>
         <content>var j=i+1;</content>
-        <connect ID="6"/>
+        <connect ID="7"/>
       </block>
-      <block id="6" type="DECISION">
+      <block id="7" type="DECISION">
         <options displayComment="false"/>
         <visual color="255 255 0" posX="180.0" posY="130.0"/>
         <content>j&lt;r</content>
-        <connect ID="7" value="true"/>
-        <connect ID="16" value="false"/>
+        <connect ID="8" value="true"/>
+        <connect ID="14" value="false"/>
       </block>
-      <block id="7" type="CPU">
+      <block id="8" type="CPU">
         <options displayComment="false"/>
         <visual color="255 255 0" posX="180.0" posY="240.0"/>
         <content>var temp=0;</content>
@@ -67,44 +67,44 @@
         <options displayComment="false"/>
         <visual color="255 255 0" posX="180.0" posY="460.0"/>
         <content>temp=a[j+1];&#13;;	a[j+1]=a[j];&#13;;	a[j]=temp;</content>
-        <connect ID="13"/>
+        <connect ID="12"/>
       </block>
       <block id="11" type="CPU">
         <options displayComment="false"/>
         <visual color="255 255 0" posX="30.0" posY="350.0"/>
         <content>j++</content>
-        <connect ID="14"/>
+        <connect ID="13"/>
       </block>
-      <block id="13" type="JUMP">
+      <block id="12" type="JUMP">
         <options displayComment="false"/>
         <visual color="255 255 0" posX="30.0" posY="460.0"/>
         <content> </content>
         <connect ID="11"/>
       </block>
-      <block id="14" type="JUMP">
+      <block id="13" type="JUMP">
         <options displayComment="false"/>
         <visual color="255 255 0" posX="80.0" posY="130.0"/>
         <content> </content>
-        <connect ID="6"/>
+        <connect ID="7"/>
       </block>
-      <block id="16" type="CPU">
+      <block id="14" type="CPU">
         <options displayComment="false"/>
         <visual color="255 255 0" posX="180.0" posY="40.0"/>
         <content>i++</content>
-        <connect ID="17"/>
+        <connect ID="15"/>
       </block>
-      <block id="17" type="JUMP">
+      <block id="15" type="JUMP">
         <options displayComment="false"/>
         <visual color="255 255 0" posX="-210.0" posY="60.0"/>
         <content> </content>
-        <connect ID="4"/>
+        <connect ID="5"/>
       </block>
-      <block id="18" type="IO">
+      <block id="16" type="IO">
         <options displayComment="true"/>
         <visual color="255 255 0" posX="-210.0" posY="260.0"/>
         <content>Writeln("tablica" + (getValueOf(a)));	;	</content>
         <comment>"tablica" +a</comment>
-        <connect ID="1"/>
+        <connect ID="2"/>
         <io ioType="1" message="tablica" messageSuffix="" newLine="true" variable="a"/>
       </block>
     </blocks>
