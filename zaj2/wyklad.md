@@ -30,3 +30,13 @@ Wyjmowanie kolejnych jest nie jako zabronione,
 
 
 5. Wskaźnik, (POINTER).
+
+6. Linked List 
+LUB TEZ PODWÓJNIE LINKOWANA TABLICA, 
+
+7. Hash bubbles
+
+
+# Java Block. 
+
+
