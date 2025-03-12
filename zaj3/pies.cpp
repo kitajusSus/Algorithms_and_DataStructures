@@ -1,7 +1,7 @@
 /**
- * @file pies_zaawansowany.cpp
+ * @file oop_basics.cpp
  * @brief Przykład demonstrujący tworzenie i zarządzanie obiektami w C++
- * @author GitHub Copilot
+ * @author masny skibider
  * @date 2025-03-12
  */
 

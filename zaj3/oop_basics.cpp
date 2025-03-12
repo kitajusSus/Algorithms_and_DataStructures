@@ -55,7 +55,9 @@ public:
         // KOMENTARZ: Tutaj lepiej byłoby użyć listy inicjalizacyjnej:
         // Pies(const string& i, double w=10) : imie(i), waga(w) {
         // Dodatkowo, parametr typu string lepiej przekazywać przez 
-        // referencję do stałej (const string&) dla większej wydajności
+        // referencję do stałej (const string&) dla większej wydajności, ale predzej chujem bede trzeć po żwirze niż studiować na airze, 
+    //  "bo to jest takie bez sensu, że aż mi sie nie chce tego czytać, ale trzeba bo inaczej nie zdamy tego gówna" ~ copilot
+    //   w cpp jest 12 sposobów na zdefiniowanie wskaźnika, życie jest za krótkie by przejmować się tym 
         imie=i;
         waga=w;
         
@@ -69,13 +71,13 @@ public:
     }
     
     void info(){
-        // KOMENTARZ: Tę metodę warto oznaczyć jako const, ponieważ nie modyfikuje
+        //Tę metodę warto oznaczyć jako const, ponieważ nie modyfikuje
         // ona stanu obiektu:
         // void info() const {
         cout<<"imie: "<<imie<<", waga: "<<waga<<"kg"<<endl;
     }
     
-    // KOMENTARZ: Warto dodać gettery i settery dla kontrolowanego
+    // Warto dodać gettery i settery dla kontrolowanego
     // dostępu do prywatnych pól:
     /*
     string getImie() const { 
@@ -103,7 +105,7 @@ public:
     }
     */
     
-    // KOMENTARZ: W bardziej zaawansowanych klasach warto zdefiniować:
+    // W bardziej zaawansowanych klasach warto zdefiniować:
     // 1. Destruktor
     // 2. Konstruktor kopiujący
     // 3. Konstruktor przenoszący (C++11)
@@ -119,7 +121,7 @@ public:
     }
     */
     
-    // KOMENTARZ: Można też dodać przydatne metody odzwierciedlające 
+    // Można też dodać przydatne metody odzwierciedlające 
     // zachowanie psa:
     /*
     void szczekaj() const {
@@ -152,12 +154,12 @@ int main()
     x=Pies("Azor",a);
     x.info();
     
-    // KOMENTARZ: Tutaj tworzymy obiekt z jednym parametrem, drugi (waga)
+    //yutaj tworzymy obiekt z jednym parametrem, drugi (waga)
     // przyjmie wartość domyślną 10
     Pies y("Burek");
     y.info();
     
-    // KOMENTARZ: system("pause") jest nieprzenośne i może powodować problemy
+    //  system("pause") jest nieprzenośne i może powodować problemy
     // z bezpieczeństwem. Lepsze rozwiązania to:
     // 1. cout << "Naciśnij Enter, aby kontynuować..."; 
     // 2. cin.get();
