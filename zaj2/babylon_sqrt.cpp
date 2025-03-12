@@ -63,24 +63,24 @@ double babylonianSqrt(double S, double epsilon = 0.001) {
 
 int main() {
     double liczba;
-    cout << "=== METODA BABILOŃCZYKÓW - OBLICZANIE PIERWIASTKA KWADRATOWEGO ===" << std::endl;
+    cout << "=== METODA BABILOnCZYKoW - OBLICZANIE PIERWIASTKA KWADRATOWEGO ===" << std::endl;
     cout << "Autor: 89219" << endl << endl;
 
     // Pobranie liczby od użytkownika
-    cout << "Podaj liczbę dodatnią: ";
+    cout << "Podaj liczbe dodatniaa: ";
     cin >> liczba;
     cout << fixed << setprecision(6);
     // ???? czy  dodatnia
     if (liczba < 0) {
-        cout << "Błąd: Liczba musi być dodatnia!" << endl;
+        cout << "Blad: Liczba musi być dodatnia!" << endl;
         return 1;
     }
     // Obliczenie
     double wynik = babylonianSqrt(liczba);
-    cout << "Pierwiastek z " << liczba << " (metoda Babilończyków): " << wynik << endl;
+    cout << "Pierwiastek z " << liczba << " (metoda Babilonczyków): " << wynik << endl;
     // Porównanie z wbudowaną funkcją sqrt()
     cout << "Pierwiastek z " << liczba << " (funkcja sqrt()): " << sqrt(liczba) << endl;
-    cout << "Różnica między wynikami: " << abs(wynik - sqrt(liczba)) << endl;
+    cout << "roznica miedzy wynikami: " << abs(wynik - sqrt(liczba)) << endl;
     
     return 0;
 }

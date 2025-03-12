@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><JavaBlocks author="user" scriptEngine="JavaScript" version="6010">
+  <option fullConnectorValues="true" grid="false" pascal="false"/>
+  <flowchart name="Start">
+    <canvas interval="200" posX="-130.72202" posY="-496.60962" zoom="3"/>
+    <blocks>
+      <block id="1" name="Start" type="START">
+        <options displayComment="true"/>
+        <visual color="255 255 0" posX="-30.0" posY="-130.0"/>
+        <comment>Start</comment>
+        <connect ID="2"/>
+      </block>
+      <block id="2" type="IO">
+        <options displayComment="true"/>
+        <visual color="255 255 0" posX="-10.0" posY="-20.0"/>
+        <content>element=ReadNumber("Który element iągu fiboanciego chcesz zoabczyć??");	;	</content>
+        <comment>"Który element iągu fiboanciego chcesz zoabczyć??";	element ;	</comment>
+        <connect ID="3"/>
+        <io array="0" inputType="0" ioType="2" message="Który element iągu fiboanciego chcesz zoabczyć??" variable="element"/>
+      </block>
+      <block id="3" type="CPU">
+        <options displayComment="false"/>
+        <visual color="255 255 0" posX="-10.0" posY="110.0"/>
+        <content>fib = new Array(element);;	fib[0] = 0; ;	fib[1] = 1;;	i=2;;	</content>
+        <connect ID="7"/>
+      </block>
+      <block id="4" type="CPU">
+        <options displayComment="false"/>
+        <visual color="255 255 0" posX="120.0" posY="430.0"/>
+        <content>Print(fib[i-1])</content>
+        <connect ID="7"/>
+      </block>
+      <block id="5" type="COMMENT">
+        <options displayComment="false"/>
+        <visual color="130 255 41" posX="500.0" posY="-50.0"/>
+        <content>no dobra&#13;;	&#13;;	&#13;;	wybiera element &#13;;	&#13;;	dla i = 1&#13;;	fib[i] = fib[0]+ fib[1]</content>
+      </block>
+      <block id="6" type="RETURN">
+        <options displayComment="true"/>
+        <visual color="255 255 0" posX="-50.0" posY="510.0"/>
+        <comment>End</comment>
+      </block>
+      <block id="7" type="DECISION">
+        <options displayComment="false"/>
+        <visual color="255 255 0" posX="-20.0" posY="330.0"/>
+        <content>i&lt;element</content>
+        <connect ID="3" value="true"/>
+      </block>
+      <block id="8" type="CPU">
+        <options displayComment="false"/>
+        <visual color="255 255 0" posX="280.0" posY="330.0"/>
+        <content>fib[i] = fib[i-1]+fib[i-2];	i++</content>
+        <connect ID="4"/>
+      </block>
+    </blocks>
+  </flowchart>
+</JavaBlocks>
