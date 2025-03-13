@@ -11,24 +11,25 @@
  * 
  * Data: 2025-03-12
  * Autor: kitajuSus
+ * ZADANIE 1 Z ZAJEC 3 
  */
 
 #include <iostream>
 #include <string>
 #include <cstdlib>
 
-// KOMENTARZ: Poniżej używamy całej przestrzeni nazw std, co nie jest zalecane
+// Poniżej używamy całej przestrzeni nazw std, co nie jest zalecane
 // w większych projektach ze względu na ryzyko konfliktów nazw.
 // Lepsze podejścia to:
 // 1. Używanie kwalifikowanej nazwy: std::cout, std::string
 // 2. Importowanie tylko konkretnych elementów: using std::cout;
 using namespace std;
 
-class Pies
-{
+class Pies{
 //pola
 //private - dostep do zmiennych tylko poprzez
 //funkcje skladowe (metody)
+// tak jak by argumenty funkcji  Pies(string imie, double waga){}  // pozwala wpuscic jakies zmienne 
 private:
     string imie;
     double waga;
@@ -61,7 +62,7 @@ public:
         imie=i;
         waga=w;
         
-        // KOMENTARZ: W tym miejscu można dodać walidację danych, np.:
+        //W tym miejscu można dodać walidację danych, np.:
         // if (waga <= 0) {
         //     cout << "Błąd: waga musi być dodatnia! Ustawiam 10kg." << endl;
         //     waga = 10;
@@ -76,7 +77,7 @@ public:
         // void info() const {
         cout<<"imie: "<<imie<<", waga: "<<waga<<"kg"<<endl;
     }
-    
+   
     // Warto dodać gettery i settery dla kontrolowanego
     // dostępu do prywatnych pól:
     /*
@@ -136,13 +137,14 @@ public:
         cout << imie << " został nakarmiony i waży teraz " << waga << "kg" << endl;
     }
     */
+    
 };
 
 int main()
 {
     // KOMENTARZ: Lepiej inicjalizować zmienne od razu przy deklaracji
     int a; //a jest obiektem typu int
-    a=20;
+    a =20;
     // Lepszy sposób: int a = 20;
     
     Pies x; //x jest obiektem typu/klasy pies
@@ -187,7 +189,7 @@ int main()
     */
     
     return 0;
-    // KOMENTARZ: W tym miejscu automatycznie wywołują się destruktory
+    // W tym miejscu automatycznie wywołują się destruktory
     // dla wszystkich lokalnych obiektów (x i y)
 }
 

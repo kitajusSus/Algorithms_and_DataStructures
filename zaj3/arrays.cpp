@@ -9,7 +9,10 @@ int main()
     int nElems = 0;         // licznik elementów - mega ważne by śledzić ile mamy elementów!
     int j;                  // zmienna do pętli - będziemy jej używać kilka razy
     int searchKey;          // wartość której będziemy szukać
-    
+    int* pointer = arr;
+
+    cout << pointer<<endl; // pusty adres narazie nie ma elementu
+    // wskaźnik pokazuje pierwszy element tablicy
     //--------------------------------------------------------------
     // Wrzucamy początkowe wartości do tablicy - normalnie można by to zrobić pętlą,
     // ale tu dla jasności robimy po jednym. To jak wkładanie rzeczy na półkę.
@@ -23,13 +26,23 @@ int main()
     arr[7] = 00;            // to samo co 0
     arr[8] = 66;
     arr[9] = 33;
-    nElems = 10;            // ustawiamy licznik na 10, bo tyle elementów dodaliśmy
+    nElems = 10; 
+    cout << *(pointer+1)<<endl; // w tej kolumnie pamieci juz jest coś       
+        // ustawiamy licznik na 10, bo tyle elementów dodaliśmy
+    cout<<"Wyswietlanie wskaznikowe dla elementów tablicy";
+    int size = sizeof(arr)/sizeof(arr[1]);
+    for(int i=0; i<size; i++)
+        cout<< *(pointer + i)<<endl;
     
+    // zobaczcie ze ten kod jest chujowy, bo rozmiar tablicy jest gigantyczny (ma 100 elementów)
+
+    int size = 
+
     //--------------------------------------------------------------
     // Wyświetlamy zawartość tablicy
     // Po prostu lecimy od 0 do nElems (czyli 10) i drukujemy każdy element
     cout << "Nasza tablica na początku: ";
-    for(j=0; j<nElems; j++)     // klasyczna pętla for: start, warunek, krok
+    for( j=0; j<nElems; j++)     // klasyczna pętla for: start, warunek, krok
         cout << arr[j] << " ";  // wyświetlamy każdy element i spację
     cout << endl;               // na końcu nowa linia dla lepszej czytelności
     
