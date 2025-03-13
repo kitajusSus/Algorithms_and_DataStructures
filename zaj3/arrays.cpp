@@ -1,11 +1,19 @@
 #include <iostream>
 using namespace std;
 
-int main()
-{
+int main(){
     // Deklarujemy tablicę 100 elementów - spoko, zawsze lepiej mieć zapas miejsca
     // w razie jakbyśmy chcieli więcej rzeczy wsadzić
-    int arr[100];           // nasza tablica do przechowywania liczb
+    int arr[100];
+    const int UNDEFINED = -999999;  // specjalna wartość oznaczająca niezdefiniowany element 
+    // Inicjalizacja wszystkich elementów jako niezdefiniowane
+    for(int i = 0; i < 100; i++) {
+        arr[i] = UNDEFINED;
+    } 
+    // Definiowanie wartości
+    arr[1] = 99;
+    arr[99] = 1;
+          // nasza tablica do przechowywania liczb
     int nElems = 0;         // licznik elementów - mega ważne by śledzić ile mamy elementów!
     int j;                  // zmienna do pętli - będziemy jej używać kilka razy
     int searchKey;          // wartość której będziemy szukać
@@ -29,14 +37,22 @@ int main()
     nElems = 10; 
     cout << *(pointer+1)<<endl; // w tej kolumnie pamieci juz jest coś       
         // ustawiamy licznik na 10, bo tyle elementów dodaliśmy
-    cout<<"Wyswietlanie wskaznikowe dla elementów tablicy";
-    int size = sizeof(arr)/sizeof(arr[1]);
-    for(int i=0; i<size; i++)
-        cout<< *(pointer + i)<<endl;
+        
+    //cout<<"Wyswietlanie wskaznikowe dla elementow tablicy";
+    //int size = sizeof(arr)/sizeof(arr[1]);
+    //for(int i=0; i<size; i++)
+    //    cout<< *(pointer + i)<<endl;
+
+    // Wyświetlanie tylko zdefiniowanych elementów
+    cout << "Zdefiniowane elementy:" << endl;
+    for(int i = 0; i < size; i++) {
+        if(arr[i] != UNDEFINED) {
+            cout << "arr[" << i << "] = " << arr[i] << endl;
+        }
+    }
     
     // zobaczcie ze ten kod jest chujowy, bo rozmiar tablicy jest gigantyczny (ma 100 elementów)
 
-    int size = 
 
     //--------------------------------------------------------------
     // Wyświetlamy zawartość tablicy
