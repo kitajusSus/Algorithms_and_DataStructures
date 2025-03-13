@@ -70,8 +70,7 @@ class OrdArray
         } 
     }  //end remove() 
 //----------------------------------------------------------- 
-    void display()                          //displays array contents 
-    { 
+    void display(){                          //displays array contents  
         for(int j=0; j<nElems; j++)         //for each element, 
             cout << v[j] << " ";            //display it 
         cout << endl; 
@@ -111,13 +110,10 @@ int main()
  
     arr.display();                   //display items again 
     return 0; 
-}  //end main() 
-/* Korzyść z stosowania uporządkowanych tablic 
+}   
+/* 
+Korzyść z stosowania uporządkowanych tablic 
 Główną korzyścią jest szybsze wyszukiwanie. Jednakże tracimy na szybkości wstawiania 
-nowych danych do tablicy (dane o większych wartościach muszą być przesunięte w górę 
-Algorytmy i Struktury Danych   03 
- 
-Andrzej Pisarski 9 
- 
+nowych danych do tablicy (dane o większych wartościach muszą być przesunięte w górę   
 tablicy w celu zrobienia miejsca na nową wartość). 
 */
