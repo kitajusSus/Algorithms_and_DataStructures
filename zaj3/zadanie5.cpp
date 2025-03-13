@@ -7,12 +7,11 @@ przypadku posortowanych danych).
 #include <iostream> 
 #include <vector> 
 using namespace std; 
-///////////////////////////////////////////////////////////// 
-class OrdArray 
-{ 
+////////////////////////////////////// 
+class OrdArray { 
     private: 
-        vector<double> v;                //vector v 
-        int nElems;                      //number of data items 
+        vector<double> v;          
+        int nElems;                 
     public: 
 //-------------------------------------------------------- 
     OrdArray(int max) : nElems(0)       //constructor 
