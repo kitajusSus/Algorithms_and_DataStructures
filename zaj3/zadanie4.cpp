@@ -2,6 +2,8 @@
 #include <vector>
 using namespace std;
 
+
+//klasa 
 class HighArray {
     private:
         vector<double> v;
