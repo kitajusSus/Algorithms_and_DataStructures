@@ -25,6 +25,8 @@
 // 2. Importowanie tylko konkretnych elementów: using std::cout;
 using namespace std;
 
+
+
 class Pies{
 //pola
 //private - dostep do zmiennych tylko poprzez
