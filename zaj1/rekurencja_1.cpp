@@ -4,15 +4,15 @@ using namespace std;
 const int n = 10;
 int tab[n] = {12, 3, 2, -7, 44, 5, 1, 0, -3,99};
 
-// Funkcja rekurencyjna zwraca true, gdy znajdzie element x w przedziale indeksów [left, right]
-bool szukajRekurencyjnie(const int tab[], int left, int right, int x) {
-    if (left > right) {
+// Funkcja rekurencyjna zwraca true, gdy znajdzie element x w przedziale indeksów [left, y]
+bool szukajRekurencyjnie(const int tab[], int left, int y, int x) {
+    if (left > y) {
         return false;
     }
     if (tab[left] == x) {
         return true;
     }
-    return szukajRekurencyjnie(tab, left + 1, right, x);
+    return szukajRekurencyjnie(tab, left + 1, y, x);
 }
 
 int main() {

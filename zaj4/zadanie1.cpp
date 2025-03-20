@@ -2,9 +2,8 @@
 //#define int std:: string;
 #include <vector>
 #include <string>
-
-using namespace std; 
-
+#include <chrono>
+using namespace std; using namespace std::chrono;
 class Person{
     private:
         string lastName;
@@ -64,29 +63,35 @@ class ArrayInOb{
             v[in] = temp;
            }
     }//zakonczenie insertion sort
-
 };
-
-
-
 int main(){
-    int maxSize = 100; 
+    int maxSize = 10000 ; 
     ArrayInOb arr(maxSize);
-
-    arr.insert("Jasny", "Gwint", 14);
-    arr.insert("Dave", "Bajo", 15);
-    arr.insert("Fajny", "Gwint", 2);
-    arr.insert("Szary", "Gwint", 24);
-    arr.insert("Niebieski", "Gwint", 134);
-    arr.insert("Ciemny", "Gwint", 44);
-
+    for(int i =0; i<1000;i++){
+        arr.insert("Jasny", "Gwint", i+1);
+        arr.insert("Dave", "Bajo", i+2);
+        arr.insert("Fajny", "Gwint", i+3);
+        arr.insert("Szary", "Gwint", i+4);
+        arr.insert("Niebieski", "Gwint", i+5);
+        arr.insert("Ciemny", "Gwint", i+6);
+    }
     cout<<"Before sorting: "<<endl;
-    arr.display();
-
+    //arr.display();
+//---------------------------------------
+    // Pomiar czasu - start
+    auto start = high_resolution_clock::now();
+    // Funkcja, której czas mierzymy
     arr.insertionSort();
+    // Pomiar czasu - stop
+    auto stop = high_resolution_clock::now();
+    cout<<"After sorting: "<<endl; 
+//---------------------------------------
+    //arr.display();
 
-    cout<<"After sorting: "<<endl;
-    arr.display();
+    // Wyświetlenie wyników pomiarów czasu
+    // Obliczenie różnicy czasu
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Sorting time: " << duration.count() << " microseconds" << endl;
     return 0;
 }
 

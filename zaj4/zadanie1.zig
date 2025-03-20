@@ -101,18 +101,27 @@ pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
     defer _ = gpa.deinit();
-    const maxSize = 100;
+    const maxSize = 10000;
     var arr = try ArrayInOb.init(allocator, maxSize);
     defer arr.deinit();
-    try arr.insert("Jasny", "Gwint", 14);
-    try arr.insert("Dave", "Bajo", 15);
-    try arr.insert("Fajny", "Gwint", 2);
-    try arr.insert("Szary", "Gwint", 24);
-    try arr.insert("Niebieski", "Gwint", 134);
-    try arr.insert("Ciemny", "Gwint", 44);
+    for (0..1000) |i| {
+        try arr.insert("Jasny", "Gwint", @intCast(@as(i32, @intCast(i)) + 1));
+        try arr.insert("Dave", "Bajo", @intCast(@as(i32, @intCast(i)) + 2));
+        try arr.insert("Fajny", "Gwint", @intCast(@as(i32, @intCast(i)) + 3));
+        try arr.insert("Szary", "Gwint", @intCast(@as(i32, @intCast(i)) + 4));
+        try arr.insert("Niebieski", "Gwint", @intCast(@as(i32, @intCast(i)) + 5));
+        try arr.insert("Ciemny", "Gwint", @intCast(@as(i32, @intCast(i)) + 6));
+    }
     std.debug.print("Before sorting:\n", .{});
-    arr.display();
+    //arr.display();
+    // Pomiar czasu
+    var timer = try std.time.Timer.start();
+    // Funkcja, której czas mierzymy
     arr.insertionSort();
+    // Zakończenie pomiaru
+    const time = timer.read();
     std.debug.print("\nAfter sorting:\n", .{});
-    arr.display();
+    //arr.display();
+    // Wyświetlenie wyników
+    std.debug.print("Sorting time for ZIG: {d} nanoseconds ({d} microseconds)\n", .{ time, time / 1000 });
 }

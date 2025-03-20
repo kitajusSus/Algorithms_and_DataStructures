@@ -22,4 +22,33 @@ Wstawiamy key na właściwą pozycję.
 Dodatkowo zrobiłem kodzik który robi to samo ale mniej klas czyli [zadanie1a.cpp bez using namespace wiec nie bójcie sie ](zadanie1a.cpp) 
 
 **Omówienie zadanie1.cpp**
-Tak o zaczynamy od klasycznych rzeczy typu. Zrobienie classy
+Tak o zaczynamy od klasycznych rzeczy typu. Zrobienie  
+`class` :
+
+```cpp
+class Person{
+    private:
+        string lastName;
+        string firstName;
+        int age;
+
+    public:
+        Person(string last, string first, int a):
+            lastName(last), firstName(first), age(a){}
+
+    void displayPerson(){
+        cout<<" //Last Name: "<<lastName;
+        cout<<" //First Name: "<< firstName;
+        cout<<" //Age: "<< age<< endl;
+    }
+    string getLast() {
+        return lastName;
+    }
+};
+```
+
+
+TUTAJ UMIESZCZAM ZIG KODE [ZIG ZIG ZIG ZIG](zadanie1.zig)
+
+
+## Polska Flaga essuniu
