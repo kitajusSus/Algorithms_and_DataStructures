@@ -2,4 +2,4 @@
 *.lib
 *.pdb
 output/
-.vscode/
+*/.vscode/
