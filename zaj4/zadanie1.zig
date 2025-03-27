@@ -101,7 +101,7 @@ pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
     defer _ = gpa.deinit();
-    const maxSize = 10000;
+    const maxSize = 6000;
     var arr = try ArrayInOb.init(allocator, maxSize);
     defer arr.deinit();
     for (0..1000) |i| {
@@ -123,5 +123,5 @@ pub fn main() !void {
     std.debug.print("\nAfter sorting:\n", .{});
     //arr.display();
     // Wyświetlenie wyników
-    std.debug.print("Sorting time for ZIG: {d} nanoseconds ({d} microseconds)\n", .{ time, time / 1000 });
+    std.debug.print("Sorting time for ZIG (6000 elementow): {d} nanoseconds, ({d} microseconds),{d} milisekund \n", .{ time, time / 1000, time / 1000 / 1000 });
 }

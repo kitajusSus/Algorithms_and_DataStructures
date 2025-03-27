@@ -65,7 +65,7 @@ class ArrayInOb{
     }//zakonczenie insertion sort
 };
 int main(){
-    int maxSize = 10000 ; 
+    int maxSize = 6001 ; 
     ArrayInOb arr(maxSize);
     for(int i =0; i<1000;i++){
         arr.insert("Jasny", "Gwint", i+1);
@@ -90,8 +90,8 @@ int main(){
 
     // Wyświetlenie wyników pomiarów czasu
     // Obliczenie różnicy czasu
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Sorting time: " << duration.count() << " microseconds" << endl;
+    auto duration = duration_cast<milliseconds>(stop - start);
+    cout << "Cpp: Sorting time dla 1000*6 elementow: " << duration.count() << "milisekund, "<<duration.count()/1000 << endl;
     return 0;
 }
 
