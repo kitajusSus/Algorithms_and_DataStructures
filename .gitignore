@@ -3,3 +3,4 @@
 *.pdb
 output/
 */.vscode/
+.vscode/
