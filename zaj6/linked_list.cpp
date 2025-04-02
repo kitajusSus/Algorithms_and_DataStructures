@@ -17,6 +17,3 @@ class Link{
     Link* pNext;
 };
 */
-
-
-
