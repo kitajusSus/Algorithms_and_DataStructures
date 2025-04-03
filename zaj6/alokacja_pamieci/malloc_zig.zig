@@ -6,11 +6,12 @@ pub fn main() !void {
     var arr = try allocator.alloc(u32, 5);
     defer allocator.free(arr);
 
-    for (arr) |*item, index| {
-        item.* = @intCast(u32, index + 1); // Correct type casting and initialization
+    for (arr, 0..) |*item, index| {
+        item.* = @intCast(index + 1);
     }
 
     for (arr) |item| {
         std.debug.print("{} ", .{item});
     }
+    std.debug.print("\n", .{});
 }
