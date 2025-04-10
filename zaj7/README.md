@@ -120,8 +120,8 @@ Ten program w C++ pokazuje, jak połączyć (scalić) dwie ***posortowane*** tab
     *   Wypisuje każdy element na ekranie, oddzielając je spacją.
     *   Na końcu przechodzi do nowej linii, żeby wynik był czytelny.
 
-## Omówienie Kodu C++: Rekurencyjne Sortowanie przez Scalanie (Merge Sort)
-
+# zadanie 5
+[zadanie5_rekurencyjnescalanie](przyklad5.cpp)
 Ten program demonstruje **Sortowanie przez Scalanie (Merge Sort)** w wersji **rekurencyjnej**. Jest to popularny i bardzo wydajny algorytm sortowania, działający na zasadzie "Dziel i Zwyciężaj" (Divide and Conquer).
 
 Wyobraź sobie, że masz talię pomieszanych kart i chcesz je posortować od najmniejszej do największej. Merge Sort działa mniej więcej tak:
