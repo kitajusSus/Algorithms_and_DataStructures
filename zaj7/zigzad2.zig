@@ -23,7 +23,7 @@ pub fn main() !void {
             return;
         }
 
-        // Parse the integer, handling potential errors
+        // wpusc integer, uwazajac na potencjalne errory
         const number = std.fmt.parseInt(i32, trimmed, 10) catch |err| {
             try stdout.print("Error parsing number: {}\n", .{err});
             return;
