@@ -1,5 +1,5 @@
 # Co to jest malloc?
-`malloc` (ang. memory allocation) to funkcja standardowej biblioteki w językach C i C++, która służy do dynamicznego alokowania pamięci na stercie. Funkcja malloc jest zdefiniowana w nagłówku <stdlib.h> w C i <cstdlib> w C++. Zwraca wskaźnik do początku zaalokowanego bloku pamięci.
+`malloc` (ang. memory allocation) to funkcja standardowej biblioteki w językach C i C++, która służy do dynamicznego alokowania pamięci na stercie/stosie wiadomo o co be. Funkcja malloc jest zdefiniowana w nagłówku <stdlib.h> w C i <cstdlib> w C++. Zwraca wskaźnik do początku zaalokowanego bloku pamięci. (czyli jeśli odniesiemy się do zaalokowanej listy to z bomby bedziemy mieli pierwszy element tej listy tablicy czy innej struktury danych )
 
 # Jak używać malloc?
 Składnia: `void* malloc(size_t size);`
@@ -37,7 +37,7 @@ int main() {
 }
 ```
 - `Parametr size`: Określa liczbę bajtów do zaalokowania.
-- Zwracana wartość: Wskaźnik do zaalokowanego bloku pamięci lub NULL, jeśli alokacja się nie powiodła.
+- Zwracana wartość: Wskaźnik do zaalokowanego bloku pamięci lub NULL, jeśli alokacja się nie powiodła. (np . z powodu braku dostępnej pamięci [nie znam przykładów na takie coś ale napewno są jak się poszuka w necie czy cuś]))
 
 1. Alokacja pamięci:
 Funkcja malloc alokuje blok pamięci na stercie o rozmiarze podanym w parametrze size. W powyższych przykładach alokujemy pamięć dla tablicy 5 liczb całkowitych (`int`).
@@ -68,7 +68,7 @@ W przeciwieństwie do C/C++, Zig nie polega na funkcjach standardowej biblioteki
 ```zig
 const std = @import("std");
 
-pub fn main() void {
+pub fn main() !void {
     const allocator = std.heap.page_allocator;
 
     var arr = try allocator.alloc(u32, 5);
@@ -83,6 +83,22 @@ pub fn main() void {
     }
 }
 ```
+< W Zig, w pętli `for` nad tablicą, można iterować na dwa sposoby:
+
+1. **Jednym elementem**: Jeśli jest  tylko jedna zmienna , np. `|item|`, to iteracja następuje po wartościach elementów tablicy.
+2. **Dwoma elementami**: Jeśli używa się dwóch zmiennych, np. `|*item, index|`, to:
+- `*item` to wskaźnik do elementu tablicy (możesz modyfikować wartość).
+   - `index` to indeks aktualnego elementu w tablicy.
+
+W kodzie:
+- Pierwsza pętla `for (arr) |*item, index|` używa wskaźnika `*item` do modyfikacji wartości w tablicy oraz `index` do przypisania wartości zależnej od indeksu.
+- Druga pętla `for (arr) |item|` iteruje tylko po wartościach elementów tablicy, aby je wypisać.
+
+To pozwala na różne operacje w zależności od potrzeb: modyfikację w pierwszej pętli i odczyt w drugiej.
+
+
+
+
 Kluczowe cechy zarządzania pamięcią w Zig:
 - **Interfejs Allocator:** Zig używa interfejsu allocator do obsługi alokacji pamięci. Pozwala to na definiowanie niestandardowych allocatorów i większą kontrolę nad zarządzaniem pamięcią.
 - **Bezpieczeństwo:** Zarządzanie pamięcią w Zig ma na celu zminimalizowanie typowych problemów takich jak wycieki pamięci i przepełnienia bufora.
