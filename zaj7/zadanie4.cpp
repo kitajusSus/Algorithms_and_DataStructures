@@ -109,4 +109,4 @@ void display(int theArray[], int size)
         cout << theArray[j] << " "; // Dodaj spację po liczbie dla czytelności
     }
     cout << endl; // Na końcu przejdź do nowej linii
-} // --- Koniec funkcji `display` ---
+}
