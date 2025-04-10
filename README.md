@@ -20,3 +20,8 @@ nie zrobiłem zadania 4tego [zadanie 4 link](zadanie4.cpp)
 
 
 ## Zadanie 4
+
+
+# Zajęcia 7 
+rekurencyjne robienie rzeczy,
+[zajecia7](zaj7/README.md)
