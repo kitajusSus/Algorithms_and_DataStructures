@@ -15,9 +15,10 @@ void odliczanie(int n) {
 ```
 
 ## Kiedy używamy rekurencji? 🎯
+0. nigdy elo pierdolone gówno 
 
-1. Gdy problem można podzielić na mniejsze, podobne problemy
-2. Gdy rozwiązanie ma naturalną strukturę rekurencyjną
+1. Gdy problem można podzielić na atomy lub na mniejsze, podobne problemy
+2. Gdy rozwiązanie ma naturalną strukturę rekurencyjną (nigdy )
 
 ## Przykład: Anagramy 📝
 
@@ -42,7 +43,7 @@ void znajdzAnagramy(string slowo, int poczatek, int koniec) {
 
 Wyobraź sobie, że porządkujesz karty:
 1. Wybierasz jedną kartę (pivot)
-2. Dzielisz pozostałe na dwie grupy: mniejsze i większe
+2. Dzielisz  pozostałe na dwie grupy: mniejsze i większe
 3. Powtarzasz to dla każdej grupy
 
 ```cpp
@@ -73,3 +74,10 @@ void quickSort(int arr[], int lewy, int prawy) {
 - Może zużywać dużo pamięci/ napewno tak bedzie 
 - Czasami wolniejsza niż rozwiązania iteracyjne
 - Może być trudna do zrozumienia na początku
+
+
+# EJ EJ EJ trojkąty z twoją starą
+ruchanie seks
+[inicjownaie zigowania](zaj7/zigzad2.zig)
+
+![bylo blisko](image.png)
