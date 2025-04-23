@@ -177,3 +177,110 @@ Hej! Pamiętasz zwykły Quicksort? Mieliśmy "szefa" (pivot) i dzieliliśmy zaba
 *   **Po co?** Dla małych kupek to dużo szybsze niż cała maszyna Quicksorta! 🚀
 
 **Dzięki tym dwóm trikom nasz Super Quicksort jest sprytniejszy i często szybszy niż ten zwykły!**
+
+
+# Smartpointery w QUICKSORT
+## Jak Zastosować Mądre Wskaźniki w Naszym Quicksort?
+W naszym przykładzie `quickSort2.cpp` mamy klasę `ArrayIns`, która w środku używa `std::vector<double> theVect;`.
+
+**Ważna sprawa:** Sam `std::vector` jest już bardzo "mądry"! On *sam* zarządza swoją pamięcią. Jak dodajesz elementy, on sam powiększa swoje miejsce w pamięci. Jak `vector` znika, on sam sprząta po sobie. **Więc NIE potrzebujemy mądrych wskaźników do zarządzania pamięcią *wewnątrz* `std::vector<double>`!**
+
+Ale **możemy** użyć mądrego wskaźnika do zarządzania **samym obiektem `ArrayIns`**, który tworzymy w funkcji `main`.
+
+Popatrz na `main` w poprzednim kodzie:
+
+```cpp
+int main() {
+    int maxSize = 16;
+    ArrayIns arr(maxSize); // <--- arr jest tworzone "normalnie" (na stosie)
+
+    // ... używamy arr.insert(), arr.display(), arr.quickSort() ...
+
+    return 0; // <-- Tutaj 'arr' jest automatycznie niszczone, bo kończy się jego zasięg
+}
+```
+
+Tutaj `arr` jest obiektem na stosie. Jest tworzone na początku `main` i automatycznie niszczone na końcu. To jest proste i bezpieczne w tym przypadku.
+
+Ale gdybyśmy z jakiegoś powodu *musieli* stworzyć `arr` dynamicznie na stercie (używając `new`), wtedy mądry wskaźnik byłby superbohaterem!
+
+**Przykład (teoretyczny, bo tu nie jest konieczny, ale pokazuje ideę):**
+
+```cpp
+#include <memory> // Potrzebujemy tego pliku do mądrych wskaźników!
+
+int main() {
+    int maxSize = 16;
+
+    // === Użycie mądrego wskaźnika ===
+    // Zamiast: ArrayIns* arr_ptr_raw = new ArrayIns(maxSize);
+    // Robimy:
+    std::unique_ptr<ArrayIns> arr_ptr = std::make_unique<ArrayIns>(maxSize);
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // To tworzy ArrayIns na stercie i od razu daje wskaźnik pod opiekę unique_ptr.
+    // Używamy std::make_unique - to najlepszy sposób tworzenia unique_ptr.
+
+    std::cout << "Zabawki przed sortowaniem:" << std::endl;
+    // Używamy operatora -> zamiast . bo mamy wskaźnik (nawet jeśli mądry)
+    arr_ptr->display();
+    std::cout << std::endl;
+
+    // Wkładamy zabawki (używając ->)
+    srand(time(NULL));
+    for(int j=0; j<maxSize; j++) {
+       double n = rand() % 100;
+       arr_ptr->insert(n); // Używamy ->
+    }
+
+     std::cout << "Po włożeniu zabawek:" << std::endl;
+     arr_ptr->display(); // Używamy ->
+     std::cout << std::endl;
+
+    // Wywołujemy sortowanie (używając ->)
+    arr_ptr->quickSort(); // Używamy ->
+
+    std::cout << std::endl;
+    std::cout << "Zabawki po sortowaniu:" << std::endl;
+    arr_ptr->display(); // Używamy ->
+
+    return 0;
+    // === MAGIA MĄDREGO WSKAŹNIKA ===
+    // Tutaj 'arr_ptr' wychodzi z zasięgu.
+    // unique_ptr WIDZI TO i AUTOMATYCZNIE woła 'delete' na obiekt ArrayIns,
+    // który trzymał! Nie musimy pisać 'delete arr_ptr_raw;'! Super!
+}
+
+```
+
+
+## Dodatkowy Tip: Mądre Wskaźniki (Smart Pointers) 🧠💡
+
+W C++ mamy coś takiego jak **mądre wskaźniki** (np. `std::unique_ptr`, `std::shared_ptr`). To jak specjalne pudełka na zwykłe wskaźniki (`*`), które **same pamiętają o sprzątaniu** (wołaniu `delete`)!
+
+*   **Po co?** Żeby uniknąć błędów i zapominania o `delete`, co prowadzi do bałaganu w pamięci (wycieków).
+*   **Jak działają?** Gdy mądry wskaźnik (pudełko) przestaje być potrzebny, automatycznie niszczy obiekt, na który wskazywał.
+*   **W naszym Quicksort:**
+    *   **WAŻNE:** Nie potrzebujemy ich do zarządzania pamięcią *wewnątrz* `std::vector<double>`, bo `vector` już jest mądry i sam to robi!
+    *   **ALE:** Moglibyśmy użyć `std::unique_ptr` do zarządzania **całym obiektem `ArrayIns`**, gdybyśmy tworzyli go dynamicznie przez `new` w funkcji `main`.
+
+    ```cpp
+    #include <memory> // Potrzebny plik
+
+    // Zamiast: ArrayIns* arr_ptr_raw = new ArrayIns(maxSize);
+    // I potem pamiętać o: delete arr_ptr_raw;
+
+    // Można zrobić:
+    std::unique_ptr<ArrayIns> arr_ptr = std::make_unique<ArrayIns>(maxSize);
+
+    // I używać go przez ->
+    arr_ptr->display();
+    arr_ptr->insert(10.0);
+    // ... itd.
+
+    // Kiedy arr_ptr zniknie, obiekt ArrayIns zostanie AUTOMATYCZNIE usunięty!
+    // Nie trzeba pisać delete!
+    ```
+*   **Wniosek:** Mądre wskaźniki są super do zarządzania dynamicznie alokowaną pamięcią, ale używaj ich tam, gdzie są potrzebne (głównie zamiast surowych wskaźników z `new`/`delete`).
+
+
+
