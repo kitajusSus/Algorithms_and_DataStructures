@@ -6,3 +6,4 @@ output/
 .vscode/
 *.py
 *.exe.obj
+*
