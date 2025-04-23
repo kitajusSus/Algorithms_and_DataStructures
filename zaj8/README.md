@@ -76,7 +76,7 @@ Funkcja partycjonująca zwraca indeks, na którym stanął pivot (tutaj: 3).
     return i; // Zwróć indeks pivota
     ```
 
-### c) Rekurencja
+#### c) Rekurencja
 
 *   Po partycjonowaniu mamy pivot na swoim miejscu i dwie podtablice.
 *   Teraz **wywołujemy Quicksort ponownie** dla tych dwóch podtablic:
@@ -99,12 +99,12 @@ Funkcja partycjonująca zwraca indeks, na którym stanął pivot (tutaj: 3).
     }
     ```
 
-## 3. Warunek Bazowy Rekurencji
+### 3. Warunek Bazowy Rekurencji
 
 *   Rekurencja musi się kiedyś skończyć!
 *   Quicksort przestaje się wywoływać dla danej podtablicy, gdy ma ona **0 lub 1 element** (`start >= koniec`). Taka tablica jest już z definicji posortowana.
 
-## 4. Przykład Krok po Kroku (Bardzo Prosty)
+### 4. Przykład Krok po Kroku (Bardzo Prosty)
 
 Sortujemy `[5, 1, 4, 2, 8]`
 
@@ -131,7 +131,7 @@ Sortujemy `[5, 1, 4, 2, 8]`
 
 Wszystkie podproblemy rozwiązane, wracamy w górę rekurencji. Ostateczny wynik: `[1, 2, 4, 5, 8]`.
 
-## Podsumowanie
+### Podsumowanie
 
 *   Quicksort to rekurencyjny algorytm sortowania.
 *   Dzieli problem na mniejsze podproblemy przez **partycjonowanie** wokół **pivota**.
@@ -139,3 +139,41 @@ Wszystkie podproblemy rozwiązane, wracamy w górę rekurencji. Ostateczny wynik
 *   Kończy działanie, gdy podtablice mają 0 lub 1 element.
 *   Jest szybki w *średnim* przypadku ($O(n log n)$), ale *może* być wolny w najgorszym ($O(n^2)$), np. gdy tablica jest już posortowana i wybieramy zawsze pierwszy/ostatni element jako pivot.
 
+
+## Improved Quicksort
+
+*Super Quicksort - Jeszcze Lepsze Sortowanie Zabawek!*
+
+Hej! Pamiętasz zwykły Quicksort? Mieliśmy "szefa" (pivot) i dzieliliśmy zabawki.
+- Ten jest **ulepszony** i działa **szybciej**, zwłaszcza jak czasem trafi się słaby podział! Ma dwa super triki(rozkminki), które sprawiają, że działa lepiej:
+
+## 1. Mądrzejszy Wybór Szefa (Pivota) 🧠
+
+*   **Problem:** Czasem stary Quicksort wybierał na szefa największą lub najmniejszą zabawkę, co spowalniało sortowanie.
+*   **Rozwiązanie:** Patrzymy na **trzy** zabawki (pierwszą, środkową, ostatnią). Wybieramy tę **"w sam raz"** (środkową co do wielkości) na szefa!
+*   **Jak w kodzie?** Funkcja `medianOf3` znajduje tego "średniego" kandydata i ustawia go jako pivot.
+    ```cpp
+    // W recQuickSort, gdy kupa jest duża:
+    double median = medianOf3(left, right); // Znajdź mądrego szefa
+    int partition = partitionIt(left, right, median); // Podziel używając go
+    ```
+*   **Po co?** Lepszy szef = bardziej równy podział kupki = szybsze sortowanie! 🎉
+
+## 2. Małe Kupki Sortujemy Prościej 👍
+
+*   **Problem:** Używanie skomplikowanego Quicksorta dla 2-3 zabawek to strata czasu.
+*   **Rozwiązanie:** Jeśli kupka jest **malutka** (3 zabawki lub mniej), sortujemy ją **"ręcznie"** - po prostu porównujemy te kilka zabawek i ustawiamy w kolejności.
+*   **Jak w kodzie?** `recQuickSort` najpierw sprawdza rozmiar kupki. Jak mała, woła `manualSort`.
+    ```cpp
+    // Na początku recQuickSort:
+    int size = right-left+1;
+    if(size <= 3) {
+       manualSort(left, right); // Proste sortowanie dla małych!
+    } else {
+       // ... normalny Quicksort z mądrym szefem ...
+    }
+    ```
+    A `manualSort` po prostu robi kilka porównań i zamian dla 2 lub 3 elementów.
+*   **Po co?** Dla małych kupek to dużo szybsze niż cała maszyna Quicksorta! 🚀
+
+**Dzięki tym dwóm trikom nasz Super Quicksort jest sprytniejszy i często szybszy niż ten zwykły!**
