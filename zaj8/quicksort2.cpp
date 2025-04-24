@@ -3,7 +3,7 @@
 // i prostym sortowaniem dla malych kupek.
 
 #include <iostream>
-#include <utility> // Dla std::swap, chocia¿ tu mamy w¿asn¿ funkcj¿ swap
+#include <utility> // Dla std::swap, chociaï¿½ tu mamy wï¿½asnï¿½ funkcjï¿½ swap
 #include <vector>
 
 // Klasa do przechowywania naszych zabawek (liczb)
@@ -12,47 +12,47 @@ private:
   std::vector<double> theVect; // Tu trzymamy zabawki
   int nElems;                  // Ile ich jest
 
-  // --- FUNKCJE WEWN¿TRZNE (POMOCNICY) ---
+  // --- FUNKCJE WEWNï¿½TRZNE (POMOCNICY) ---
 
-  // Nasza g¿ówna funkcja sortuj¿ca - ta, która wywo¿uje sam¿ siebie!
+  // Nasza glowna funkcja sortujaca - ta, ktora wywoluje sama siebie!
   void recQuickSort(int left, int right) {
     // Liczymy, ile zabawek jest w tej kupce
     int size = right - left + 1;
 
-    // === TRIK 2: SPRAWDZAMY, CZY KUPKA JEST MA¿A ===
+    // === TRIK 2: SPRAWDZAMY, CZY KUPKA JEST MAï¿½A ===
     if (size <= 3) {
-      // Je¿li 3 lub mniej, u¿ywamy prostego sortowania
-      std::cout << "  -> Kupka ma¿a (" << size << "), sortowanie r¿czne dla ["
+      // Jesli 3 lub mniej, uzywamy prostego sortowania
+      std::cout << "  -> Kupka mala (" << size << "), sortowanie reczne dla ["
                 << left << "," << right << "]" << std::endl;
       manualSort(left, right);
-    } else { // Je¿li kupka jest wi¿ksza...
-      std::cout << "  -> Kupka du¿a (" << size << "), normalny Quicksort dla ["
+    } else { // Jeï¿½li kupka jest wiï¿½ksza...
+      std::cout << "  -> Kupka duza (" << size << "), normalny Quicksort dla ["
                 << left << "," << right << "]" << std::endl;
-      // === TRIK 1: WYBIERAMY M¿DREGO SZEFA (PIVOTA) ===
-      // Wo¿amy funkcj¿, która znajdzie "¿redni¿" zabawk¿ z trzech
+      // === TRIK 1: WYBIERAMY Mï¿½DREGO SZEFA (PIVOTA) ===
+      // Woï¿½amy funkcjï¿½, ktï¿½ra znajdzie "ï¿½redniï¿½" zabawkï¿½ z trzech
       double median = medianOf3(left, right);
-      std::cout << "    Wybrany m¿dry szef (median): " << median << std::endl;
+      std::cout << "    Wybrany madry szef (median): " << median << std::endl;
 
-      // Dzielimy kupk¿ u¿ywaj¿c tego m¿drego szefa
-      // Funkcja partitionIt jest podobna jak w zwyk¿ym Quicksort,
-      // tylko teraz wie, ¿e szef jest na pozycji 'right-1'
+      // Dzielimy kupkï¿½ uï¿½ywajï¿½c tego mï¿½drego szefa
+      // Funkcja partitionIt jest podobna jak w zwykï¿½ym Quicksort,
+      // tylko teraz wie, ï¿½e szef jest na pozycji 'right-1'
       int partition = partitionIt(left, right, median);
-      std::cout << "    Podzia¿ zako¿czony, szef wyl¿dowa¿ na: " << partition
+      std::cout << "    Podzial zakonczony, szef wyladowal na: " << partition
                 << std::endl;
 
-      // Wywo¿ujemy siebie (rekurencja!) dla dwóch mniejszych kupek
-      recQuickSort(left, partition - 1);  // Sortuj lew¿ kupk¿
-      recQuickSort(partition + 1, right); // Sortuj praw¿ kupk¿
+      // Wywoï¿½ujemy siebie (rekurencja!) dla dwï¿½ch mniejszych kupek
+      recQuickSort(left, partition - 1);  // Sortuj lewï¿½ kupkï¿½
+      recQuickSort(partition + 1, right); // Sortuj prawï¿½ kupkï¿½
     }
   } // Koniec recQuickSort
 
-  // === FUNKCJA DO WYBIERANIA M¿DREGO SZEFA ===
-  // Patrzy na pierwsz¿, ¿rodkow¿ i ostatni¿ zabawk¿,
-  // wybiera t¿ "¿redni¿" i ustawia j¿ na pozycji 'right-1'
+  // === FUNKCJA DO WYBIERANIA MaDREGO SZEFA ===
+  // Patrzy na pierwsze, srodkowe i ostatnia zabawka,
+  // wybiera ta "srednia" i ustawia ja na pozycji 'right-1'
   double medianOf3(int left, int right) {
-    int center = (left + right) / 2; // Znajd¿ ¿rodek
+    int center = (left + right) / 2; // Znajdï¿½ ï¿½rodek
 
-    // Porównaj i zamie¿, ¿eby by¿y w kolejno¿ci: left <= center <= right
+    // Porï¿½wnaj i zamieï¿½, ï¿½eby byï¿½y w kolejnoï¿½ci: left <= center <= right
     if (theVect[left] > theVect[center])
       swap(left, center);
     if (theVect[left] > theVect[right])
@@ -60,83 +60,83 @@ private:
     if (theVect[center] > theVect[right])
       swap(center, right);
 
-    // Teraz 'center' ma warto¿¿ "¿redni¿" (median¿).
-    // Zamieniamy j¿ miejscem z zabawk¿ na 'right-1'.
-    // To przygotowuje j¿ do bycia naszym "szefem" (pivotem) dla partitionIt.
+    // Teraz 'center' ma wartoï¿½ï¿½ "ï¿½redniï¿½" (medianï¿½).
+    // Zamieniamy jï¿½ miejscem z zabawkï¿½ na 'right-1'.
+    // To przygotowuje jï¿½ do bycia naszym "szefem" (pivotem) dla partitionIt.
     swap(center, right - 1);
     std::cout << "    medianOf3: Po zamianach, pivot (" << theVect[right - 1]
               << ") jest na " << right - 1 << std::endl;
-    return theVect[right - 1]; // Zwró¿ warto¿¿ m¿drego szefa
+    return theVect[right - 1]; // Zwrï¿½ wartoï¿½ï¿½ mï¿½drego szefa
   } // Koniec medianOf3
 
   // === FUNKCJA DO DZIELENIA KUPKI ===
-  // Dzia¿a podobnie jak w zwyk¿ym Quicksort, ale wie,
-  // ¿e prawdziwy "szef" (pivot) jest na pozycji 'right-1'.
-  // U¿ywa wska¿ników 'leftMark' i 'rightMark' do przestawiania zabawek.
+  // Dziaï¿½a podobnie jak w zwykï¿½ym Quicksort, ale wie,
+  // ï¿½e prawdziwy "szef" (pivot) jest na pozycji 'right-1'.
+  // Uï¿½ywa wskaï¿½nikï¿½w 'leftMark' i 'rightMark' do przestawiania zabawek.
   int partitionIt(int left, int right, double pivot) {
-    int leftMark = left; // Zaczyna od lewej (ale zaraz przeskoczy pierwsz¿)
-    int rightMark = right - 1; // Zaczyna od prawej (przed pozycj¿ szefa)
+    int leftMark = left; // Zaczyna od lewej (ale zaraz przeskoczy pierwszï¿½)
+    int rightMark = right - 1; // Zaczyna od prawej (przed pozycjï¿½ szefa)
 
     while (true) {
-      // Szukaj od lewej zabawki WI¿KSZEJ od szefa
-      // ++leftMark -> najpierw zwi¿ksz, potem sprawd¿
+      // Szukaj od lewej zabawki WIï¿½KSZEJ od szefa
+      // ++leftMark -> najpierw zwiï¿½ksz, potem sprawdï¿½
       while (theVect[++leftMark] < pivot)
-        ; // Pusta p¿tla - szukamy
+        ; // Pusta pï¿½tla - szukamy
 
       // Szukaj od prawej zabawki MNIEJSZEJ od szefa
-      // --rightMark -> najpierw zmniejsz, potem sprawd¿
+      // --rightMark -> najpierw zmniejsz, potem sprawdï¿½
       while (theVect[--rightMark] <
-             pivot) // B¿¿D W ORYGINALE? Powinno by¿ '>'? Sprawd¿my kod z
+             pivot) // Bï¿½ï¿½D W ORYGINALE? Powinno byï¿½ '>'? Sprawdï¿½my kod z
                     // prezentacji. Tak, >.
-        // Poprawka: Powinno szuka¿ elementu MNIEJSZEGO lub RÓWNEGO pivotowi od
-        // prawej, ale algorytm Lafore'a szuka WI¿KSZEGO od pivot i idzie od
-        // prawej. Trzymajmy si¿ Lafore'a:
+        // Poprawka: Powinno szukaï¿½ elementu MNIEJSZEGO lub Rï¿½WNEGO pivotowi od
+        // prawej, ale algorytm Lafore'a szuka WIï¿½KSZEGO od pivot i idzie od
+        // prawej. Trzymajmy siï¿½ Lafore'a:
         while (theVect[--rightMark] > pivot)
-          ; // Pusta p¿tla - szukamy (wg Lafore'a, szukamy > pivot id¿c w lewo)
+          ; // Pusta pï¿½tla - szukamy (wg Lafore'a, szukamy > pivot idï¿½c w lewo)
 
-      if (leftMark >= rightMark)   // Je¿li wska¿niki si¿ min¿¿y...
-        break;                     // ...to koniec dzielenia tej cz¿¿ci
-      else                         // Je¿li si¿ nie min¿¿y...
-        swap(leftMark, rightMark); // ...zamie¿ znalezione zabawki miejscami
-    } // Koniec p¿tli while
+      if (leftMark >= rightMark)   // Jeï¿½li wskaï¿½niki siï¿½ minï¿½ï¿½y...
+        break;                     // ...to koniec dzielenia tej czï¿½ï¿½ci
+      else                         // Jeï¿½li siï¿½ nie minï¿½ï¿½y...
+        swap(leftMark, rightMark); // ...zamieï¿½ znalezione zabawki miejscami
+    } // Koniec pï¿½tli while
 
-    // Po p¿tli, wska¿nik 'leftMark' jest na pierwszej zabawce z "prawej"
-    // (wi¿kszej) grupy. Trzeba teraz postawi¿ naszego szefa (który jest na
-    // 'right-1') na w¿a¿ciwym miejscu. W¿a¿ciwe miejsce to w¿a¿nie 'leftMark'.
+    // Po pï¿½tli, wskaï¿½nik 'leftMark' jest na pierwszej zabawce z "prawej"
+    // (wiï¿½kszej) grupy. Trzeba teraz postawiï¿½ naszego szefa (ktï¿½ry jest na
+    // 'right-1') na wï¿½aï¿½ciwym miejscu. Wï¿½aï¿½ciwe miejsce to wï¿½aï¿½nie 'leftMark'.
     swap(leftMark, right - 1);
-    return leftMark; // Zwró¿ indeks, gdzie wyl¿dowa¿ szef
+    return leftMark; // Zwrï¿½ indeks, gdzie wylï¿½dowaï¿½ szef
   } // Koniec partitionIt
 
-  // === FUNKCJA DO PROSTEGO SORTOWANIA MA¿YCH KUPEK ===
+  // === FUNKCJA DO PROSTEGO SORTOWANIA MAï¿½YCH KUPEK ===
   void manualSort(int left, int right) {
     int size = right - left + 1;
     if (size <= 1)
-      return;        // 0 lub 1 zabawka = ju¿ posortowane
+      return;        // 0 lub 1 zabawka = juï¿½ posortowane
     if (size == 2) { // Dwie zabawki
       if (theVect[left] > theVect[right])
-        swap(left, right); // Zamie¿, je¿li trzeba
+        swap(left, right); // Zamieï¿½, jeï¿½li trzeba
       return;
     } else { // Trzy zabawki (size == 3)
-      // Proste porównania i zamiany, by ustawi¿ w kolejno¿ci
-      if (theVect[left] > theVect[right - 1]) // lewa ze ¿rodkow¿
+      // Proste porï¿½wnania i zamiany, by ustawiï¿½ w kolejnoï¿½ci
+      if (theVect[left] > theVect[right - 1]) // lewa ze ï¿½rodkowï¿½
         swap(left, right - 1);
-      if (theVect[left] > theVect[right]) // lewa z praw¿
+      if (theVect[left] > theVect[right]) // lewa z prawï¿½
         swap(left, right);
-      if (theVect[right - 1] > theVect[right]) // ¿rodkowa z praw¿
+      if (theVect[right - 1] > theVect[right]) // ï¿½rodkowa z prawï¿½
         swap(right - 1, right);
     }
     std::cout << "      Po manualSort: ";
     displaySubset(left, right);
   } // Koniec manualSort
 
-  // Funkcja do zamiany dwóch zabawek miejscami
+  // Funkcja do zamiany dwï¿½ch zabawek miejscami
   void swap(int dex1, int dex2) {
     double temp = theVect[dex1];
     theVect[dex1] = theVect[dex2];
     theVect[dex2] = temp;
   }
 
-  // Pomocnicza do wy¿wietlania fragmentu
+  // Pomocnicza do wyï¿½wietlania fragmentu
   void displaySubset(int left, int right) {
     std::cout << "[";
     for (int k = left; k <= right; ++k)
@@ -148,13 +148,13 @@ public:
   // Konstruktor - tworzy miejsce na zabawki
   ArrayIns(int max) : nElems(0) { theVect.resize(max); }
 
-  // Dodaje now¿ zabawk¿
+  // Dodaje nowï¿½ zabawkï¿½
   void insert(double value) {
     theVect[nElems] = value;
     nElems++;
   }
 
-  // Wy¿wietla wszystkie zabawki
+  // Wyï¿½wietla wszystkie zabawki
   void display() {
     std::cout << "A = [ ";
     for (int j = 0; j < nElems; j++)
@@ -162,34 +162,34 @@ public:
     std::cout << "]" << std::endl;
   }
 
-  // G¿ówna funkcja sortuj¿ca, któr¿ wywo¿ujemy z zewn¿trz
+  // Gï¿½ï¿½wna funkcja sortujï¿½ca, ktï¿½rï¿½ wywoï¿½ujemy z zewnï¿½trz
   void quickSort() {
-    std::cout << "Rozpoczynanie Super Quicksort dla " << nElems << " elementów."
+    std::cout << "Rozpoczynanie Super Quicksort dla " << nElems << " elementow."
               << std::endl;
-    recQuickSort(0, nElems - 1); // Zaczynamy sortowanie od pocz¿tku do ko¿ca
-    std::cout << "Super Quicksort zako¿czony." << std::endl;
+    recQuickSort(0, nElems - 1); // Zaczynamy sortowanie od poczï¿½tku do koï¿½ca
+    std::cout << "Super Quicksort zakonczony." << std::endl;
   }
 }; // Koniec klasy ArrayIns
 
-// --- G¿ówna cz¿¿¿ programu ---
+// --- Gï¿½ï¿½wna czï¿½ï¿½ï¿½ programu ---
 int main() {
   int maxSize = 16;      // Maksymalna liczba zabawek
-  ArrayIns arr(maxSize); // Tworzymy pude¿ko na zabawki
+  ArrayIns arr(maxSize); // Tworzymy pudeï¿½ko na zabawki
 
-  // Wk¿adamy losowe zabawki (mo¿esz zmieni¿ na inne liczby)
-  srand(time(NULL)); // ¿eby losowanie by¿o ró¿ne za ka¿dym razem
+  // Wkï¿½adamy losowe zabawki (moï¿½esz zmieniï¿½ na inne liczby)
+  srand(time(NULL)); // ï¿½eby losowanie byï¿½o rï¿½ne za kaï¿½dym razem
   for (int j = 0; j < maxSize; j++) {
     double n = rand() % 100; // Losowa zabawka od 0 do 99
     arr.insert(n);
   }
-  // Mo¿esz te¿ doda¿ zabawki r¿cznie:
+  // Moï¿½esz teï¿½ dodaï¿½ zabawki rï¿½cznie:
   // arr.insert(77); arr.insert(99); arr.insert(44); ...
 
   std::cout << "Zabawki przed sortowaniem:" << std::endl;
   arr.display();
   std::cout << std::endl;
 
-  // Wywo¿ujemy nasze super sortowanie!
+  // Wywoï¿½ujemy nasze super sortowanie!
   arr.quickSort();
 
   std::cout << std::endl;
