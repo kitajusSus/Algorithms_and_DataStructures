@@ -159,7 +159,7 @@ class Tree {
                     localStack.pop(); 
                 } 
             }  //end while isRowEmpty is false 
-            cout <<"......................................................"; 
+            cout <<"....................................................................."; 
             cout << endl; 
         }  //end displayTree() 
  
