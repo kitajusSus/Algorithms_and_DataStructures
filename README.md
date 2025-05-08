@@ -28,3 +28,6 @@ rekurencyjne robienie rzeczy,
 
 # zajecia 8 
 [zajecia8](zaj8/README.md)
+
+# zajecia  9 
+[zajecia9](zaj9/README.md)
