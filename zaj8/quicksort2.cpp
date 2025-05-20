@@ -3,7 +3,7 @@
 // i prostym sortowaniem dla malych kupek.
 
 #include <iostream>
-#include <utility> // Dla std::swap, chocia� tu mamy w�asn� funkcj� swap
+// #include <utility> // Dla std::swap, chocia� tu mamy w�asn� funkcj� swap
 #include <vector>
 
 // Klasa do przechowywania naszych zabawek (liczb)
@@ -19,7 +19,7 @@ private:
     // Liczymy, ile zabawek jest w tej kupce
     int size = right - left + 1;
 
-    // === TRIK 2: SPRAWDZAMY, CZY KUPKA JEST MA�A ===
+    // === TRIK 2: SPRAWDZAMY, CZY KUPKA JEST MAlaA ===
     if (size <= 3) {
       // Jesli 3 lub mniej, uzywamy prostego sortowania
       std::cout << "  -> Kupka mala (" << size << "), sortowanie reczne dla ["
@@ -53,6 +53,7 @@ private:
     int center = (left + right) / 2; // Znajd� �rodek
 
     // Por�wnaj i zamie�, �eby by�y w kolejno�ci: left <= center <= right
+    //
     if (theVect[left] > theVect[center])
       swap(left, center);
     if (theVect[left] > theVect[right])
@@ -86,13 +87,14 @@ private:
       // Szukaj od prawej zabawki MNIEJSZEJ od szefa
       // --rightMark -> najpierw zmniejsz, potem sprawd�
       while (theVect[--rightMark] <
-             pivot) // B��D W ORYGINALE? Powinno by� '>'? Sprawd�my kod z
-                    // prezentacji. Tak, >.
+             pivot) // B��D W ORYGINALE? Powinno by� '>'? Sprawd�my kod z preze
+                    // tacji. Tak, >.
         // Poprawka: Powinno szuka� elementu MNIEJSZEGO lub R�WNEGO pivotowi od
-        // prawej, ale algorytm Lafore'a szuka WI�KSZEGO od pivot i idzie od
-        // prawej. Trzymajmy si� Lafore'a:
+        // rawej, ale algorytm Lafore'a szuka WI�KSZEGO od pivot i idzie o
+        //  prawej. Trzymajmy si� Lafore'a:
         while (theVect[--rightMark] > pivot)
-          ; // Pusta p�tla - szukamy (wg Lafore'a, szukamy > pivot id�c w lewo)
+          ; // Pusta p�tla - szukamy (wg Lafore'a, szukamy > pivot id�c w lew
+            // )
 
       if (leftMark >= rightMark)   // Je�li wska�niki si� min��y...
         break;                     // ...to koniec dzielenia tej cz��ci
@@ -101,8 +103,9 @@ private:
     } // Koniec p�tli while
 
     // Po p�tli, wska�nik 'leftMark' jest na pierwszej zabawce z "prawej"
-    // (wi�kszej) grupy. Trzeba teraz postawi� naszego szefa (kt�ry jest na
-    // 'right-1') na w�a�ciwym miejscu. W�a�ciwe miejsce to w�a�nie 'leftMark'.
+    // (wi�kszej) grupy. Trzeba teraz postawi� naszego szefa (kt�ry jest na 'r
+    // ght-1') na w�a�ciwym miejscu. W�a�ciwe miejsce to w�a�nie
+    // 'leftMark'.
     swap(leftMark, right - 1);
     return leftMark; // Zwr� indeks, gdzie wyl�dowa� szef
   } // Koniec partitionIt
@@ -166,7 +169,8 @@ public:
   void quickSort() {
     std::cout << "Rozpoczynanie Super Quicksort dla " << nElems << " elementow."
               << std::endl;
-    recQuickSort(0, nElems - 1); // Zaczynamy sortowanie od pocz�tku do ko�ca
+    recQuickSort(0,
+                 nElems - 1); // Zaczynamy sortowanie od pocz�tku do ko�ca
     std::cout << "Super Quicksort zakonczony." << std::endl;
   }
 }; // Koniec klasy ArrayIns
