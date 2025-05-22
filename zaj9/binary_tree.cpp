@@ -114,7 +114,7 @@ public:
   }
 
   void displayTree() {
-    stack<Node *> globalStack;
+    stack<Node *> globalStack; // glowny element 
     globalStack.push(pRoot);
     int nBlanks = 32;
     bool isRowEmpty = false;
@@ -149,9 +149,8 @@ public:
         globalStack.push(localStack.top());
         localStack.pop();
       }
-    } // end while isRowEmpty is false
-    cout << ".................................................................."
-            "...";
+    } 
+    cout << ".................................................................."<<endl;
     cout << endl;
   } // end displayTree()
 

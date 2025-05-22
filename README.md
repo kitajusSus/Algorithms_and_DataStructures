@@ -29,3 +29,15 @@ rekurencyjne robienie rzeczy,
 # zajecia  9 
 [zajecia9](zaj9/README.md)
 
+
+
+## odnoscie kolokwium
+
+jeszcze zostały 3 zajecia 
+
+
+> 12.06 
+> 19.06 
+
+**możliwe terminy**
+

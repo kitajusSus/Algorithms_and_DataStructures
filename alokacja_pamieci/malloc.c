@@ -5,26 +5,29 @@ int main() {
     int *arr;
     int n = 5;
     
-    // Allocate memory for an array of 5 integers
+    // AL O K O W A AN I E  
     arr = (int*)malloc(n * sizeof(int));
     
-    // Check if memory allocation was successful
+    
+    // Check if  MA BALS FIT IN YOUR MOUTH 
     if (arr == NULL) {
         printf("Memory not allocated.\n");
         return 1;
     }
     
-    // Memory has been successfully allocated
+    // Memory has been successfully FITED IN YOU DUPCIA PUPCIA PEŁNA KUPCIA
     for (int i = 0; i < n; ++i) {
         arr[i] = i + 1;
     }
     
-    // Print the allocated memory values
+    // co jest zaalokowane
     for (int i = 0; i < n; ++i) {
         printf("%d ", arr[i]);
     }
     
-    // Free the allocated memory
+    //  PROGRAMOWANIA TEST FRIENDLY  
+    
+    printf("pamieć zwolniona {}");
     free(arr);
     
     return 0;

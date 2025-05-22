@@ -34,7 +34,7 @@ public:
   }
 
   // Zwraca aktualny rozmiar kopca
-  int heapSize() const { // Dodano const, bo metoda nie modyfikuje obiektu
+  int heapSize() const { 
     return nElems;
   }
 
@@ -184,12 +184,12 @@ public:
     for (int i = originalNumElems; i >= 2; i--) {
       swapElements(
           1,
-          i); // Przenieś największy element (k[1]) na koniec aktualnego zakresu
-      nElems--;       // Zmniejsz rozmiar przetwarzanego kopca
-      restoreHeap(1); // Przywróć własność kopca dla reszty
+          i); // Przenieśie  największy element (k[1]) na koniec aktualnego zakresu
+      nElems--;       // Zmniejsz rozmiar przetwarzanego kopca (kupci z dupci)
+      restoreHeap(1); // PRZYWROC BIALA EUROPE I 
     }
-    nElems = originalNumElems; // Przywróć oryginalny rozmiar kopca (teraz
-                               // tablica jest posortowana)
+    nElems = originalNumElems; // PRZYWRACAAAA oryginalny rozmiar kopca {kupci z dupci} 
+                                //  (teraz tablica jest posortowana)
   }
 
   // --- Zadanie 1: Funkcja displayTree() ---
@@ -239,13 +239,14 @@ private:
     //    Lewy syn będzie wyświetlony "poniżej" bieżącego węzła w konsoli.
     displayTreeRecursive(leftChild(nodeIndex), level + 1);
   }
-  // --- Koniec Zadania 1 ---
+
 };
 
 int main() {
   // Inicjalizacja generatora liczb losowych
-  // Używamy std::srand i std::time dla zgodności ze standardem C++
-  std::srand(static_cast<unsigned>(std::time(nullptr)));
+  // Używam std::srand i std::time dla tego zeby było zgodne  ze standardem C++
+  // kocham cpp skibidi 
+  srand(static_cast<unsigned>(std::time(nullptr)));
 
   int maxSize = 20;         // Maksymalny możliwy rozmiar kopca
   int initialHeapSize = 10; // Początkowa liczba elementów do wstawienia
@@ -295,7 +296,7 @@ int main() {
   // cout << "Drzewo po sortowaniu (jesli to nadal ma sens):" << endl;
   // h.displayTree();
 
-  cout << "\nNacisnij Enter, aby zakonczyc...";
-  cin.get(); // Czeka na Enter - bardziej przenośne niż system("pause")
+  //cout << "\nNacisnij Enter, aby zakonczyc...";
+  //cin.get(); // Czeka na Enter - bardziej przenośne niż system("pause")
   return 0;
 }

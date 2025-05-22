@@ -20,7 +20,7 @@ pub fn main() !void {
 
 //1. **Jednym elementem**: Jeśli używasz tylko jednej zmiennej, np. `|item|`, to iterujesz po wartościach elementów tablicy.
 //2. **Dwoma elementami**: Jeśli używasz dwóch zmiennych, np. `|*item, index|`, to:
- //  - `*item` to wskaźnik do elementu tablicy (możesz modyfikować wartość).
+//  - `*item` to wskaźnik do elementu tablicy (możesz modyfikować wartość).
 //   - `index` to indeks aktualnego elementu w tablicy.
 
 //W kodzie:
@@ -28,5 +28,3 @@ pub fn main() !void {
 //- Druga pętla `for (arr) |item|` iteruje tylko po wartościach elementów tablicy, aby je wypisać.
 
 //To pozwala na różne operacje w zależności od potrzeb: modyfikację w pierwszej pętli i odczyt w drugiej.
-
-
