@@ -31,6 +31,8 @@ rekurencyjne robienie rzeczy,
 
 
 
+
+
 ## odnoscie kolokwium
 
 jeszcze zostały 3 zajecia 
