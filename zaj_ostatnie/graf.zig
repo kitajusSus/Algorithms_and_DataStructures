@@ -4,37 +4,48 @@ const Allocator = std.mem.Allocator;
 
 const Node = struct {
     id: usize,
-    neighbors: std.ArrayList(usize),
+    neighbors: std.ArrayListUnmanaged(usize),
+
+    pub fn init(id: usize) Node {
+        return Node{
+            .id = id,
+            .neighbors = .{},
+        };
+    }
+
+    pub fn deinit(self: *Node, allocator: Allocator) void {
+        self.neighbors.deinit(allocator);
+    }
 };
 
 const Graph = struct {
-    allocator: *Allocator,
-    nodes: std.ArrayList(Node),
+    allocator: Allocator,
+    nodes: std.ArrayListUnmanaged(Node),
 
-    pub fn init(allocator: *Allocator) !Graph {
+    pub fn init(allocator: Allocator) Graph {
         return Graph{
             .allocator = allocator,
-            .nodes = try std.ArrayList(Node).init(allocator),
+            .nodes = .{},
         };
     }
 
     pub fn deinit(self: *Graph) void {
         for (self.nodes.items) |*node| {
-            node.neighbors.deinit();
+            node.deinit(self.allocator);
         }
-        self.nodes.deinit();
+        self.nodes.deinit(self.allocator);
     }
 
     pub fn addNode(self: *Graph) !usize {
         const id = self.nodes.items.len;
-        const neighbors = try std.ArrayList(usize).init(self.allocator);
-        try self.nodes.append(Node{ .id = id, .neighbors = neighbors });
+        const node = Node.init(id);
+        try self.nodes.append(self.allocator, node);
         return id;
     }
 
     pub fn addEdge(self: *Graph, a: usize, b: usize) !void {
-        try self.nodes.items[a].neighbors.append(b);
-        try self.nodes.items[b].neighbors.append(a); // dla grafu nieskierowanego
+        try self.nodes.items[a].neighbors.append(self.allocator, b);
+        try self.nodes.items[b].neighbors.append(self.allocator, a); // dla grafu nieskierowanego
     }
 
     pub fn print(self: *Graph) void {
@@ -49,9 +60,7 @@ const Graph = struct {
 };
 
 pub fn main() !void {
-    var allocator = std.heap.page_allocator;
-    var graph = try Graph.init(&allocator); // przekazanie wskaźnika
-
+    var graph = Graph.init(std.heap.page_allocator);
     defer graph.deinit();
 
     const a = try graph.addNode();
