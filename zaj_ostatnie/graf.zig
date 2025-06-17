@@ -27,7 +27,7 @@ const Graph = struct {
 
     pub fn addNode(self: *Graph) !usize {
         const id = self.nodes.items.len;
-        var neighbors = try std.ArrayList(usize).init(self.allocator);
+        const neighbors = try std.ArrayList(usize).init(self.allocator);
         try self.nodes.append(Node{ .id = id, .neighbors = neighbors });
         return id;
     }
@@ -49,8 +49,8 @@ const Graph = struct {
 };
 
 pub fn main() !void {
-    const allocator = std.heap.page_allocator;
-    var graph = try Graph.init(allocator);
+    var allocator = std.heap.page_allocator;
+    var graph = try Graph.init(&allocator); // przekazanie wskaźnika
 
     defer graph.deinit();
 
