@@ -33,7 +33,8 @@ const Graph = struct {
         for (self.nodes.items) |*node| {
             node.deinit(self.allocator);
         }
-        self.nodes.deinit(self.allocator);
+        self.nodes.deinit(self
+            .allocator);
     }
 
     pub fn addNode(self: *Graph) !usize {
